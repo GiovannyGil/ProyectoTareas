@@ -18,7 +18,7 @@ app.set('port', PORT)
 app.use(morgan('dev')) // para que express pueda entender las peticiones
 app.use(Express.json()) // para que express pueda entender json
 app.set(Express.urlencoded({ extended: true })) // para que express pueda entender formularios
-app.use(cors())
+app.use(cors()) // para que cualquier dominio lea o haga peticiones
 
 // rutas
 app.use('/api', UsuariosController)
@@ -28,6 +28,10 @@ app.use('/api', HabilidadesController)
 app.get('/', (req, res) => {
     res.send('Hello World')
 })
+
+// conexion base de datos
+import { initializeDatabase } from './database/conexion.js'
+initializeDatabase()
 
 // exportar app
 export default app

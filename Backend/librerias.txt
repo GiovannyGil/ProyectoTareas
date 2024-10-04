@@ -1,0 +1,15 @@
+express: npm i express
+nodemon: npm i nodemon -D -- para que el servidor se actualice con cada cambio
+cors: npm i cors para que cualquier dominio lea o haga peticiones
+morgan: npm i morgan --> para ver las peticiones que se hacen al servidor
+dotenv: npm i dotenv -- para leer las variables de entorno
+
+
+sequelize: npm install sequelize sqlite3 sqlite2
+npm install --save-dev sequelize-cli -- crear entorno
+npx sequelize-cli init -- migraciones
+npx sequelize-cli model:generate --name User --attributes firstName:string,lastName:string,email:string --> migracion de los modelos con este ejemplo
+npx sequelize-cli db:migrate:undo --> para de volver la migracion al estado anterior
+
+
+- bcrypt: npm i bcrypt --> encriptacion de datos

@@ -1,41 +1,47 @@
-export const Habilidades = conexion.define('Habilidades', {
-    id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
-    },
+import { EntitySchema } from "typeorm"
 
-    NombreHabilidad: {
-        type: DataTypes.STRING,
-        length: 50,
-        allowNull: false
+export const Habilidades = new EntitySchema(
+    {name: "Habilidad", tableName: "habilidades",
+    columns: {
+        id: {
+            primary: true,
+            type: "int",
+            generated: true,
+            nullable: false,
+        },
+        nombre:{
+            type: "varchar",
+            length: 40,
+            nullable: false,
+        },
+        descripcion:{
+            type: "varchar",
+            length: 100,
+            nullable: false,
+        },
+        nivel:{
+            type: "int",
+            nullable: false,
+            default: 0
+        },
+        createdAt: {
+            type: "timestamp",
+            createDate: true,
+        },
+            updatedAt: {
+            type: "timestamp",
+            updateDate: true,
+        },
+        deletedAt: {
+            type: "timestamp",
+            nullable: true,
+        },
     },
-    Descripcion: {
-        type: DataTypes.STRING,
-        length: 50,
-        allowNull: false
-    },
-    nivel: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        defaultValue: 0,
-        validate: {
-            min: 0,
-            max: 5
+    relations: {
+        tareas: {
+            target: "Tarea",
+            type: "many-to-many",
+            inverseSide: "habilidades"
         }
-    },
-    createdAt: {
-        type: DataTypes.DATE,
-        allowNull: false
-    },
-    updatedAt: {
-        type: DataTypes.DATE,
-        allowNull: false
-    },
-    deletedAt: {
-        type: DataTypes.DATE,
-        allowNull: true
     }
-}, {
-    timestamps: false
 })

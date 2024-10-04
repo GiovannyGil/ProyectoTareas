@@ -1,50 +1,61 @@
-import { Usuarios } from "../../usuarios/models/Usuarios.model";
+import { EntitySchema } from "typeorm"
 
-export const Tareas = conexion.define('Tareas', {
-    id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
+export const Tareas = new EntitySchema(
+    {name: "Tarea", tableName: "tareas",
+    columns: {
+        id: {
+            primary: true,
+            type: "int",
+            generated: true,
+            nullable: false,
+        },
+        nombre:{
+            type: "varchar",
+            length: 40,
+            nullable: false,
+        },
+        descripcion:{
+            type: "varchar",
+            length: 100,
+            nullable: false,
+        },
+        dificultad: {
+            type: "int",
+            nullable: false,
+            default: 0,
+        },
+        createdAt: {
+            type: "timestamp",
+            createDate: true,
+        },
+            updatedAt: {
+            type: "timestamp",
+            updateDate: true,
+        },
+        deletedAt: {
+            type: "timestamp",
+            nullable: true,
+        },
     },
-    NombreTarea: {
-        type: DataTypes.STRING,
-        length: 50,
-        allowNull: false
-    },
-    Descripcion: {
-        type: DataTypes.STRING,
-        length: 50,
-        allowNull: false
-    },
-    dificultad: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        defaultValue: 0,
-        validate: {
-            min: 0,
-            max: 5
+    relations: {
+        habilidades: {
+            target: "Habilidad",
+            type: "many-to-many",
+            joinTable: {
+                name: "tareas_habilidades",
+            },
+            cascade: true,
+            eager: true,
+            onDelete: "CASCADE",
+            onUpdate: "CASCADE",
+        },
+        usuario: {
+            target: "Usuario",
+            type: "many-to-one",
+            joinColumn: true,
+            eager: true,
+            onDelete: "CASCADE",
+            onUpdate: "CASCADE",
         }
-    },
-    UsuarioId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: Usuarios,
-            key: 'id'
-        }
-    },
-    createdAt: {
-        type: DataTypes.DATE,
-        allowNull: false
-    },
-    updatedAt: {
-        type: DataTypes.DATE,
-        allowNull: false
-    },
-    deletedAt: {
-        type: DataTypes.DATE,
-        allowNull: true
     }
-}, {
-    timestamps: false
 })

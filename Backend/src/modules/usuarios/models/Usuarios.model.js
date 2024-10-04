@@ -1,77 +1,85 @@
-export const Usuarios = conexion.define('Usuarios', {
-    id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
-    },
-    uuid: {
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
-        allowNull: false,
-        unique: true
-    },
-    Nombres: {
-        type: DataTypes.STRING, // tipo
-        length: 50, // longitud
-        allowNull: false, // no nulo
-    },
-    Apellidos: {
-        type: DataTypes.STRING, // tipo
-        length: 50, // longitud
-        allowNull: false, // no nulo
-    },
-    NombreUsuario: {
-        type: DataTypes.STRING, // tipo
-        length: 50, // longitud
-        allowNull: false, // no nulo
-        unique: true // unico
-    },
-    edad: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        length: 3
-    },
-    correo: {
-        type: DataTypes.STRING,
-        length: 50,
-        allowNull: false,
-        unique: true,
-        validate: {
-            isEmail: true
-        }
-    },
-    clave: {
-        type: DataTypes.STRING,
-        length: 50,
-        allowNull: false
-    },
-    rol: {
-        type: DataTypes.STRING,
-        length: 50,
-        allowNull: false
-    },
-    habilidades: {
-        type: DataTypes.STRING,
-        length: 50,
-        allowNull: false
-    },
-    estado: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false
-    },
-    createdAt: {
-        type: DataTypes.DATE,
-        allowNull: false
-    },
-    updatedAt: {
-        type: DataTypes.DATE,
-        allowNull: false
-    },
-    deletedAt: {
-        type: DataTypes.DATE,
-        allowNull: true
-    }
+import { EntitySchema } from "typeorm"
 
-}, {
-    timestamps: false
-})
+export const Usuarios = new EntitySchema(
+    {name: "Usuario", tableName: "usuarios",
+    columns: {
+        id: {
+            primary: true,
+            type: "int",
+            generated: true,
+            nullable: false,
+        },
+        uuid: {
+            type: "varchar",
+            length: 100,
+            unique: true,
+            nullable: false,
+        },
+        nombres: {
+            type: "varchar",
+            length: 40,
+            nullable: false,
+        },
+        apellidos: {
+            type: "varchar",
+            length: 40,
+            nullable: false,
+        },
+        nombreusuario: {
+            type: "varchar",
+            length: 40,
+            nullable: false,
+            unique: true,
+        },
+        edad: {
+            type: "int",
+            nullable: false,
+        },
+        correo: {
+            type: "varchar",
+            length: 40,
+            nullable: false,
+            unique: true,
+        },
+        clave: {
+            type: "varchar",
+            length: 200,
+            nullable: false,
+        },
+        estado: {
+            type: "int",
+            nullable: false,
+            default: 0, // 0 -> 1 -> 2 -> 3 -> 4 -> 5
+        },
+        fecharegistro: {
+            type: "timestamp",
+            nullable: false,
+            default: () => "CURRENT_TIMESTAMP",
+        },
+        habilidades: {
+            type: "varchar",
+            nullable: true,
+            length: "20"
+        },
+        createdAt: {
+            type: "timestamp",
+            createDate: true,
+        },
+            updatedAt: {
+            type: "timestamp",
+            updateDate: true,
+        },
+        deletedAt: {
+            type: "timestamp",
+            nullable: true,
+        },
+    },
+    relations: {
+      tareas: {
+        target: "Tarea",
+        type: "one-to-many",
+        inverseSide: "usuario",  // Relación inversa con Tarea
+        cascade: true,
+      }
+    }
+  });
