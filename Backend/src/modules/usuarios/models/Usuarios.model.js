@@ -56,11 +56,6 @@ export const Usuarios = new EntitySchema(
             nullable: false,
             default: () => "CURRENT_TIMESTAMP",
         },
-        habilidades: {
-            type: "varchar",
-            nullable: true,
-            length: "20"
-        },
         createdAt: {
             type: "timestamp",
             createDate: true,

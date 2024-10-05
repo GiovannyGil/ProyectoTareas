@@ -20,10 +20,10 @@ var dataSource = new DataSource({
 export const initializeDatabase = async () => {
   try {
     await dataSource.initialize();
-    console.log('Base de datos conectada exitosamente');
+    console.log('Base de datos conectada exitosamente',);
   } catch (error) {
-    console.error('Error conectando la base de datos:', error);
-    throw error; // Lanza el error si quieres manejarlo en otro lugar
+    console.error('Error conectando la base de datos:', error.message);
+    throw error.message; // Lanza el error si quieres manejarlo en otro lugar
   }
 };
 
