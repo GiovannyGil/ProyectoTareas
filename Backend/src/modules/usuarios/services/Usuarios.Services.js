@@ -65,16 +65,15 @@ export const ObtenerUsuarios = async (req, res) => {
         const usuarios = await Usuarios.find();
 
         // verificar si se obtuvieron los usuarios
-        if (usuarios) {
-            console.warn('Usuarios obtenidos correctamente');
-            return res.status(200).json({
-                message: 'Usuarios obtenidos correctamente',
-                usuarios
-            });
-        } else {
+        if (!usuarios) {
             console.error(`NO SE PUDIERON OBTENER LOS USUARIOS ALGO SUCEDIÓ, ${error.message}`);
             return res.status(400).json({ message: 'NO SE PUDIERON OBTENER LOS USUARIOS ALGO SUCEDIÓ' });
         }
+        console.warn('Usuarios obtenidos correctamente');
+        return res.status(200).json({
+            message: 'Usuarios obtenidos correctamente',
+            usuarios
+        });
     } catch (error) {
         console.error(`NO SE PUDIERON OBTENER LOS USUARIOS: ${error.message}`);
         return res.status(500).json({message: 'Error del servidor', error: error.message});
@@ -94,17 +93,16 @@ export const ObtenerUsuarioPorId = async (req, res) => {
         // obtener el usuario por id
         const usuario = await Usuarios.findOne(id);
 
-        // verificar si el usuario existe
-        if (usuario) {
-            console.warn('Usuario obtenido correctamente');
-            return res.status(200).json({
-                message: 'Usuario obtenido correctamente',
-                usuario
-            });
-        } else {
+        // verificar si no existe el usuario
+        if (!usuario) {
             console.error(`NO SE PUDO OBTENER EL USUARIO ALGO SUCEDIÓ, ${error.message}`);
             return res.status(400).json({ message: 'NO SE PUDO OBTENER EL USUARIO ALGO SUCEDIÓ' });
         }
+        console.warn('Usuario obtenido correctamente');
+        return res.status(200).json({
+            message: 'Usuario obtenido correctamente',
+            usuario
+        });
     } catch (error) {
         console.error(`NO SE PUDO OBTENER EL USUARIO: ${error.message}`);
         return res.status(500).json({message: 'Error del servidor', error: error.message});
@@ -123,16 +121,16 @@ export const ObtenerUsuarioNombre= async (req, res) => {
         const usuario = await Usuarios.findOne({nombreusuario: req.params.nombreUsuario});
 
         // verificar si el usuario existe
-        if (usuario) {
-            console.warn('Usuario obtenido correctamente');
-            return res.status(200).json({
-                message: 'Usuario obtenido correctamente',
-                usuario
-            });
-        } else {
+        if (!usuario) {
             console.error(`NO SE PUDO OBTENER EL USUARIO ALGO SUCEDIÓ, ${error.message}`);
             return res.status(400).json({ message: 'NO SE PUDO OBTENER EL USUARIO ALGO SUCEDIÓ' });
         }
+
+        console.warn('Usuario obtenido correctamente');
+        return res.status(200).json({
+            message: 'Usuario obtenido correctamente',
+            usuario
+        });
     } catch (error) {
         console.error(`NO SE PUDO OBTENER EL USUARIO: ${error.message}`);
         return res.status(500).json({message: 'Error del servidor', error: error.message});
@@ -142,7 +140,25 @@ export const ObtenerUsuarioNombre= async (req, res) => {
 // metodo para obtener un usuario por correo
 export const ObtenerUsuarioCorreo = async (req, res) => {
     try {
+        // verificar si el correo no esta vacio
+        if (!req.params.correo) {
+            return res.status(400).json({ message: 'El correo es obligatorio' });
+        }
+
+        // obtener el usuario por correo
+        const usuario = await Usuarios.findOne({correo: req.params.correo});
+
+        // verificar si el usuario existe
+        if (!usuario) {
+            console.error(`NO SE PUDO OBTENER EL USUARIO ALGO SUCEDIÓ, ${error.message}`);
+            return res.status(400).json({ message: 'NO SE PUDO OBTENER EL USUARIO ALGO SUCEDIÓ' });
+        }
+
         console.warn('Usuario obtenido correctamente');
+        return res.status(200).json({
+            message: 'Usuario obtenido correctamente',
+            usuario
+        });
     } catch (error) {
         console.error(`NO SE PUDO OBTENER EL USUARIO: ${error.message}`);
         return res.status(500).json({message: 'Error del servidor', error: error.message});
@@ -178,17 +194,16 @@ export const ActualizarUsuario = async (req, res) => {
             })
 
             // verificar si se actualizo el usuario
-            if (ActualizarUsuario) {
-                console.warn('Usuario actualizado correctamente');
-                return res.status(200).json({
-                    message: 'Usuario actualizado correctamente',
-                    usuario: ActualizarUsuario
-                });
-            } else {
+            if (!ActualizarUsuario) {
                 console.error(`NO SE PUDO ACTUALIZAR EL USUARIO ALGO SUCEDIÓ, ${error.message}`);
                 return res.status(400).json({ message: 'NO SE PUDO ACTUALIZAR EL USUARIO ALGO SUCEDIÓ' });
             }
 
+            console.warn('Usuario actualizado correctamente');
+            return res.status(200).json({
+                message: 'Usuario actualizado correctamente',
+                usuario: ActualizarUsuario
+            });
         } else {
             console.error(`NO SE PUDO ACTUALIZAR EL USUARIO ALGO SUCEDIÓ, ${error.message}`);
             return res.status(400).json({ message: 'NO SE PUDO ACTUALIZAR EL USUARIO ALGO SUCEDIÓ' });
@@ -212,16 +227,16 @@ export const EliminarUsuario = async (req, res) => {
         const EliminarUsuario = await Usuarios.delete(req.params.id);
 
         // verificar si se elimino el usuario
-        if (EliminarUsuario) {
-            console.warn('Usuario eliminado correctamente');
-            return res.status(200).json({
-                message: 'Usuario eliminado correctamente',
-                usuario
-            });
-        } else {
+        if (!EliminarUsuario) {
             console.error(`NO SE PUDO ELIMINAR EL USUARIO ALGO SUCEDIÓ, ${error.message}`);
             return res.status(400).json({ message: 'NO SE PUDO ELIMINAR EL USUARIO ALGO SUCEDIÓ' });
         }
+
+        console.warn('Usuario eliminado correctamente');
+        return res.status(200).json({
+            message: 'Usuario eliminado correctamente',
+            usuario
+        });
     } catch (error) {
         console.error(`NO SE PUDO ELIMINAR EL USUARIO: ${error.message}`);
         return res.status(500).json({message: 'Error del servidor', error: error.message});
