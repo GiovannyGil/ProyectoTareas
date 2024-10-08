@@ -7,11 +7,11 @@ import * as Habilidades from '../services/Habilidades.Services.js'
 const router = Router()
 
 // definir rutas ->
-router.post('/habilidades', Habilidades.CrearHabilidad)
-router.get('/habilidades', Habilidades.ObtenerHabilidades)
-router.get('/habilidades/:id', Habilidades.ObtenerHabilidadPorId)
-router.get('/habilidades/habilidad/:nombreHabilidad', Habilidades.ObtenerHabilidadNombre)
-router.put('/habilidades/:id', Habilidades.ActualizarHabilidad) // put o patch
-router.delete('/habilidades/:id', Habilidades.EliminarHabilidad)
+router.post('/', Habilidades.CrearHabilidad)
+router.get('/', Habilidades.ObtenerHabilidades)
+router.get('/:id', Habilidades.ObtenerHabilidadPorId)
+router.get('/habilidad/:nombreHabilidad', Habilidades.ObtenerHabilidadNombre)
+router.put('/:id', Habilidades.ActualizarHabilidad) // put o patch
+router.delete('/:id', Habilidades.EliminarHabilidad)
 
 export default router

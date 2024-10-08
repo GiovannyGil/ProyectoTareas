@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Random UUID</h1>
+    <p>UUID: <span id="uuid"></span></p>
+</body>
+<script>
+    document.getElementById('uuid').innerText = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    
+</script>
+</html>
+

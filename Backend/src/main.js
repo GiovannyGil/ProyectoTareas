@@ -16,17 +16,8 @@ app.set(Express.urlencoded({ extended: true })) // para que express pueda entend
 app.use(cors()) // para que cualquier dominio lea o haga peticiones
 
 // rutas
-import UsuariosController from './modules/usuarios/controllers/Usuarios.Controller.js'
-import TareasController from './modules/tareas/controllers/Tarea.Controller.js';
-import HabilidadesController from './modules/habilidades/controllers/Habilidades.Controller.js';
-
-app.use('/api', UsuariosController)
-app.use('/api', TareasController)
-app.use('/api', HabilidadesController)
-// url por defecto
-app.get('/', (req, res) => {
-    res.send('Hello World')
-})
+import ruta from "./routes.js"
+app.use('/api', ruta)
 
 // conexion base de datos
 import { initializeDatabase } from './database/conexion.js'

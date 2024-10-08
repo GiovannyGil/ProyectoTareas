@@ -7,12 +7,12 @@ import * as Usuarios from '../services/Usuarios.Services.js'
 const router = Router()
 
 // definir rutas ->
-router.post('/usuarios', Usuarios.CrearUsuario)
-router.get('/usuarios', Usuarios.ObtenerUsuarios)
-router.get('/usuarios/:id', Usuarios.ObtenerUsuarioPorId)
-router.get('/usuarios/usuario/:nombreUsuario', Usuarios.ObtenerUsuarioNombre)
-router.get('/usuarios/correo/:correo', Usuarios.ObtenerUsuarioCorreo)
-router.put('/usuarios/:id', Usuarios.ActualizarUsuario) // put o patch
-router.delete('/usuarios/:id', Usuarios.EliminarUsuario)
+router.post('/', Usuarios.CrearUsuario)
+router.get('/', Usuarios.ObtenerUsuarios)
+router.get('/:id', Usuarios.ObtenerUsuarioPorId)
+router.get('/usuario/:nombreUsuario', Usuarios.ObtenerUsuarioNombre)
+router.get('/correo/:correo', Usuarios.ObtenerUsuarioCorreo)
+router.put('/:id', Usuarios.ActualizarUsuario) // put o patch
+router.delete('/:id', Usuarios.EliminarUsuario)
 
 export default router

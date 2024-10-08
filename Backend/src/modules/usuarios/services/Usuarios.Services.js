@@ -1,5 +1,6 @@
 import { Usuarios } from "../models/Usuarios.model.js";
 import bcryptjs from 'bcryptjs';
+import {randomUUID} from 'crypto'
 
 // metodo para crar Usuario
 export const CrearUsuario = async (req, res) => {
@@ -29,6 +30,8 @@ export const CrearUsuario = async (req, res) => {
 
         // crear el usuario
         const usuario = await Usuarios.create({
+            // uuid: randomUUID,
+            uuid: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
             nombres,
             apellidos,
             nombreusuario,
@@ -172,42 +175,42 @@ export const ActualizarUsuario = async (req, res) => {
         const usuario = await Usuarios.findOne(req.params.id);
 
         // verificar si el usuario existe
-        if (usuario) {
-            // recibir los datos del body
-            const { nombres, apellidos, nombreusuario, edad, correo, clave, estado } = req.body;
-
-            // verificar si los datos no estan vacios
-            if (!nombres || !apellidos || !nombreusuario || !edad || !correo || !clave || estado === undefined) {
-                console.error('LOS DATOS NO PUEDEN ESTAR VACIOS');
-                return res.status(400).json({ message: 'LOS DATOS NO PUEDEN ESTAR VACIOS' });
-            }
-
-            // actualizar el usuario
-            const ActualizarUsuario = await Usuarios.update(req.params.id, {
-                nombres,
-                apellidos,
-                nombreusuario,
-                edad,
-                correo,
-                clave,
-                estado
-            })
-
-            // verificar si se actualizo el usuario
-            if (!ActualizarUsuario) {
-                console.error(`NO SE PUDO ACTUALIZAR EL USUARIO ALGO SUCEDIÓ, ${error.message}`);
-                return res.status(400).json({ message: 'NO SE PUDO ACTUALIZAR EL USUARIO ALGO SUCEDIÓ' });
-            }
-
-            console.warn('Usuario actualizado correctamente');
-            return res.status(200).json({
-                message: 'Usuario actualizado correctamente',
-                usuario: ActualizarUsuario
-            });
-        } else {
+        if (!usuario) {
             console.error(`NO SE PUDO ACTUALIZAR EL USUARIO ALGO SUCEDIÓ, ${error.message}`);
             return res.status(400).json({ message: 'NO SE PUDO ACTUALIZAR EL USUARIO ALGO SUCEDIÓ' });
         }
+        
+        // recibir los datos del body
+        const { nombres, apellidos, nombreusuario, edad, correo, clave, estado } = req.body;
+
+        // verificar si los datos no estan vacios
+        if (!nombres || !apellidos || !nombreusuario || !edad || !correo || !clave || estado === undefined) {
+            console.error('LOS DATOS NO PUEDEN ESTAR VACIOS');
+            return res.status(400).json({ message: 'LOS DATOS NO PUEDEN ESTAR VACIOS' });
+        }
+
+        // actualizar el usuario
+        const ActualizarUsuario = await Usuarios.update(req.params.id, {
+            nombres,
+            apellidos,
+            nombreusuario,
+            edad,
+            correo,
+            clave,
+            estado
+        })
+
+        // verificar si se actualizo el usuario
+        if (!ActualizarUsuario) {
+            console.error(`NO SE PUDO ACTUALIZAR EL USUARIO ALGO SUCEDIÓ, ${error.message}`);
+            return res.status(400).json({ message: 'NO SE PUDO ACTUALIZAR EL USUARIO ALGO SUCEDIÓ' });
+        }
+
+        console.warn('Usuario actualizado correctamente');
+        return res.status(200).json({
+            message: 'Usuario actualizado correctamente',
+            usuario: ActualizarUsuario
+        });
     } catch (error) {
         console.error(`NO SE PUDO ACTUALIZAR EL USUARIO: ${error.message}`);
         return res.status(500).json({message: 'Error del servidor', error: error.message});

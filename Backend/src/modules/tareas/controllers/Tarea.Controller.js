@@ -8,9 +8,9 @@ const router = Router()
 
 // definir rutas ->
 router.post('/tareas', Tareas.CrearTarea)
-router.get('/tareas', Tareas.ObtenerTareas)
-router.get('/tareas/:id', Tareas.ObtenerTareaPorId)
-router.put('/tareas/:id', Tareas.ActualizarTarea) // put o patch
-router.delete('/tareas/:id', Tareas.EliminarTarea)
+router.get('/', Tareas.ObtenerTareas)
+router.get('/:id', Tareas.ObtenerTareaPorId)
+router.put('/:id', Tareas.ActualizarTarea) // put o patch
+router.delete('/:id', Tareas.EliminarTarea)
 
 export default router
