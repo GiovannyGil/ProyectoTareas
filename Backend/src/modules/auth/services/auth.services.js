@@ -1,4 +1,5 @@
 import { Usuarios } from "../models/Usuarios.model.js";
+import {ObtenerUsuarioNombre} from '../../usuarios/services/Usuarios.Services.js'
 import bcryptjs from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
@@ -14,8 +15,13 @@ export const RegistrarUsuario = async (req, res) => {
         }
 
         // Verificar si el usuario ya existe
-        const usuarioExiste = await Usuarios.findOne({ where: { nombreusuario } });
-        if (usuarioExiste) {
+        // const usuarioExiste = await Usuarios.findOne({ where: { nombreusuario } });
+        // if (usuarioExiste) {
+        //     console.error('EL USUARIO YA EXISTE');
+        //     return res.status(400).json({ message: 'EL USUARIO YA EXISTE' });
+        // }
+        const usuarioExistente = await ObtenerUsuarioNombre(nombreusuario)
+        if (usuarioExistente) {
             console.error('EL USUARIO YA EXISTE');
             return res.status(400).json({ message: 'EL USUARIO YA EXISTE' });
         }
@@ -61,7 +67,8 @@ export const IniciarSesion = async (req, res) => {
         }
 
         // Buscar el usuario en la base de datos
-        const usuario = await Usuarios.findOne({ where: { nombreusuario } });
+        // const usuario = await Usuarios.findOne({ where: { nombreusuario } });
+        const usuario = await ObtenerUsuarioNombre(nombreusuario)
         if (!usuario) {
             console.error('USUARIO NO ENCONTRADO');
             return res.status(400).json({ message: 'USUARIO NO ENCONTRADO' });
@@ -108,7 +115,8 @@ export const CerrarSesion = async (req, res) => {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
         // Verificar si el usuario existe (opcional, pero es buena práctica)
-        const usuario = await Usuarios.findOne({ where: { id: decoded.id } });
+        // const usuario = await Usuarios.findOne({ where: { id: decoded.id } });
+        const usuario = await ObtenerUsuarioNombre(nombreusuario)
         if (!usuario) {
             console.error('Usuario no encontrado');
             return res.status(404).json({ message: 'Usuario no encontrado' });
@@ -121,35 +129,18 @@ export const CerrarSesion = async (req, res) => {
         );
 
         // Verificar si se actualizó correctamente
-        if (actualizarToken) {
-            console.warn('Sesión cerrada y token revocado correctamente');
-            return res.status(200).json({ message: 'Sesión cerrada y token revocado correctamente' });
-        } else {
+        if (!actualizarToken) {
             console.error('No se pudo revocar el token');
             return res.status(500).json({ message: 'No se pudo revocar el token' });
         }
+        console.warn('Sesión cerrada y token revocado correctamente');
+        return res.status(200).json({ message: 'Sesión cerrada y token revocado correctamente' });
     } catch (error) {
         console.error(`Error al cerrar sesión: ${error.message}`);
         return res.status(500).json({ message: 'Error del servidor', error: error.message });
     }
 };
 
-// Método para verificar token (middleware para proteger rutas)
-export const VerificarToken = (req, res, next) => {
-    const token = req.header('x-auth-token');
-    if (!token) {
-        return res.status(401).json({ message: 'No hay token, permiso denegado' });
-    }
-
-    try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.usuario = decoded;
-        next();
-    } catch (error) {
-        console.error('Token no válido');
-        return res.status(401).json({ message: 'Token no válido' });
-    }
-};
 
 // Método para obtener el perfil del usuario autenticado
 export const ObtenerPerfil = async (req, res) => {
