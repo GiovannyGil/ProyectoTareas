@@ -18,6 +18,12 @@ app.use(cors()) // para que cualquier dominio lea o haga peticiones
 // rutas
 import ruta from "./routes.js"
 app.use('/api', ruta)
+// condiciones de la ruta equivocada -> dar info de cual es la ruta correcta
+app.use((req, res) => {
+    res.status(404).json({ message: 'Ruta no encontrada, la ruta a la que debe ingresar es: http://localhost:3000/api' })
+})
+
+
 
 // conexion base de datos
 import { initializeDatabase } from './database/conexion.js'

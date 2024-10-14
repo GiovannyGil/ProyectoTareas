@@ -1,37 +1,37 @@
 import { Usuarios } from "../models/Usuarios.model.js";
+import { dataSource } from '../../../database/conexion.js'
 import bcryptjs from 'bcryptjs';
-import {randomUUID} from 'crypto'
+import { randomUUID } from 'crypto'
 
 // metodo para crar Usuario
 export const CrearUsuario = async (req, res) => {
     try {
-        console.log(req.body);
+        // Obtener el repositorio de la entidad Usuarios
+        const UsuariosRepository = dataSource.getRepository(Usuarios);
 
-        // recibir los datos del body
+        // Recibir los datos del body
         const { nombres, apellidos, nombreusuario, edad, correo, clave, estado } = req.body;
 
-        // verificar si los datos no estan vacios
-        if (!nombres || !apellidos || !nombreusuario || !edad || !correo || !clave || !estado) {
-            console.error('LOS DATOS NO PUEDEN ESTAR VACIOS');
-            return res.status(400).json({ message: 'LOS DATOS NO PUEDEN ESTAR VACIOS' });
+        // Verificar si los datos no están vacíos
+        if (!nombres || !apellidos || !nombreusuario || !edad || !correo || !clave || estado === undefined) {
+            console.error('LOS DATOS NO PUEDEN ESTAR VACÍOS');
+            return res.status(400).json({ message: 'LOS DATOS NO PUEDEN ESTAR VACÍOS' });
         }
 
-        // verificar si el usuario ya existe
-        const usuarioExiste = await ObtenerUsuarioNombre(nombreusuario);
+        // Verificar si el usuario ya existe
+        const usuarioExiste = await UsuariosRepository.findOne({ where: { nombreusuario } });
         if (usuarioExiste) {
             console.error('EL USUARIO YA EXISTE');
             return res.status(400).json({ message: 'EL USUARIO YA EXISTE' });
         }
 
-        // encriptar la clave
+        // Encriptar la clave
         const salt = await bcryptjs.genSalt(10);
         const claveEncriptada = await bcryptjs.hash(clave, salt);
 
-
-        // crear el usuario
-        const usuario = await Usuarios.create({
-            // uuid: randomUUID,
-            uuid: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
+        // Crear el usuario
+        const usuario = UsuariosRepository.create({
+            uuid: randomUUID(),
             nombres,
             apellidos,
             nombreusuario,
@@ -41,47 +41,47 @@ export const CrearUsuario = async (req, res) => {
             estado
         });
 
-        // guardar el usuario
-        const guardarUsuario = await usuario.save();
-        // verificar si se guardo el usuario
-        if (guardarUsuario) {
-            console.warn('Usuario creado correctamente');
-            return res.status(201).json({
-                message: 'Usuario creado correctamente',
-                usuario: guardarUsuario
-            });
-        } else {
-            console.error(`NO SE PUDO CREAR EL USUARIO ALGO SUCEDIÓ, ${error.message}`);
-            return res.status(400).json({ message: 'NO SE PUDO CREAR EL USUARIO ALGO SUCEDIÓ' });
-        }
+        // Guardar el usuario
+        const guardarUsuario = await UsuariosRepository.save(usuario);
+
+        // Verificar si se guardó el usuario
+        console.warn('Usuario creado correctamente');
+        return res.status(201).json({
+            message: 'Usuario creado correctamente',
+            usuario: guardarUsuario
+        });
 
     } catch (error) {
         console.error(`NO SE PUDO CREAR EL USUARIO: ${error.message}`);
-        return res.status(500).json({message: 'Error del servidor', error: error.message});
+        return res.status(500).json({ message: 'Error del servidor', error: error.message });
     }
-}
+};
 
-// metodo para obtener todos los usuarios
+// Método para obtener todos los usuarios
 export const ObtenerUsuarios = async (req, res) => {
     try {
-        // obtener todos los usuarios
-        const usuarios = await Usuarios.find();
+        // Obtener el repositorio de la entidad Usuarios
+        const UsuariosRepository = dataSource.getRepository(Usuarios);
 
-        // verificar si se obtuvieron los usuarios
-        if (!usuarios) {
-            console.error(`NO SE PUDIERON OBTENER LOS USUARIOS ALGO SUCEDIÓ, ${error.message}`);
-            return res.status(400).json({ message: 'NO SE PUDIERON OBTENER LOS USUARIOS ALGO SUCEDIÓ' });
+        // Obtener todos los usuarios
+        const usuarios = await UsuariosRepository.find();
+
+        // Verificar si no hay usuarios
+        if (!usuarios || usuarios.length === 0) {
+            console.warn('No se encontraron usuarios en la base de datos');
+            return res.status(404).json({ message: 'No se encontraron usuarios' });
         }
+
         console.warn('Usuarios obtenidos correctamente');
         return res.status(200).json({
             message: 'Usuarios obtenidos correctamente',
             usuarios
         });
     } catch (error) {
-        console.error(`NO SE PUDIERON OBTENER LOS USUARIOS: ${error.message}`);
-        return res.status(500).json({message: 'Error del servidor', error: error.message});
+        console.error(`No se pudieron obtener los usuarios: ${error.message}`);
+        return res.status(500).json({ message: 'Error del servidor', error: error.message });
     }
-}
+};
 
 // metodo para obtener un usuario por id
 export const ObtenerUsuarioPorId = async (req, res) => {
@@ -94,12 +94,13 @@ export const ObtenerUsuarioPorId = async (req, res) => {
             return res.status(400).json({ message: 'ID inválido' });
         }
         // obtener el usuario por id
-        const usuario = await Usuarios.findOne(id);
+        const UsuariosRepository = dataSource.getRepository(Usuarios);
+        const usuario = await UsuariosRepository.findOneBy({ id });
 
         // verificar si no existe el usuario
         if (!usuario) {
-            console.error(`NO SE PUDO OBTENER EL USUARIO ALGO SUCEDIÓ, ${error.message}`);
-            return res.status(400).json({ message: 'NO SE PUDO OBTENER EL USUARIO ALGO SUCEDIÓ' });
+            console.error(`Usuario no encontrado`);
+            return res.status(404).json({ message: 'Usuario no encontrado' });
         }
         console.warn('Usuario obtenido correctamente');
         return res.status(200).json({
@@ -115,18 +116,22 @@ export const ObtenerUsuarioPorId = async (req, res) => {
 // metodo para obtener un usuario por nombre de usuario
 export const ObtenerUsuarioNombre= async (req, res) => {
     try {
+        // obtener el nombre de usuario
+        const { nombreusuario } = req.params;
+
         // verificar si el nombre de usuario no esta vacio
-        if (!req.params.nombreUsuario) {
+        if (!nombreusuario) {
             return res.status(400).json({ message: 'El nombre de usuario es obligatorio' });
         }
 
         // obtener el usuario por nombre de usuario
-        const usuario = await Usuarios.findOne({nombreusuario: req.params.nombreUsuario});
+        const UsuariosRepository = dataSource.getRepository(Usuarios);
+        const usuario = await UsuariosRepository.findOneBy({nombreusuario: nombreusuario});
 
         // verificar si el usuario existe
         if (!usuario) {
-            console.error(`NO SE PUDO OBTENER EL USUARIO ALGO SUCEDIÓ, ${error.message}`);
-            return res.status(400).json({ message: 'NO SE PUDO OBTENER EL USUARIO ALGO SUCEDIÓ' });
+            console.error('no se encontro el usuario');
+            return res.status(404).json({ message: 'No se encontró el usuario' });
         }
 
         console.warn('Usuario obtenido correctamente');
@@ -143,18 +148,22 @@ export const ObtenerUsuarioNombre= async (req, res) => {
 // metodo para obtener un usuario por correo
 export const ObtenerUsuarioCorreo = async (req, res) => {
     try {
+        // obtener el correo
+        const { correo } = req.params;
+
         // verificar si el correo no esta vacio
-        if (!req.params.correo) {
+        if (!correo) {
             return res.status(400).json({ message: 'El correo es obligatorio' });
         }
 
         // obtener el usuario por correo
-        const usuario = await Usuarios.findOne({correo: req.params.correo});
+        const UsuariosRepository = dataSource.getRepository(Usuarios);
+        const usuario = await UsuariosRepository.findOneBy({correo: correo});
 
         // verificar si el usuario existe
         if (!usuario) {
-            console.error(`NO SE PUDO OBTENER EL USUARIO ALGO SUCEDIÓ, ${error.message}`);
-            return res.status(400).json({ message: 'NO SE PUDO OBTENER EL USUARIO ALGO SUCEDIÓ' });
+            console.error('No se encontro el usuario');
+            return res.status(404).json({ message: 'no se encontro el usuario' });
         }
 
         console.warn('Usuario obtenido correctamente');
@@ -171,13 +180,22 @@ export const ObtenerUsuarioCorreo = async (req, res) => {
 // metodo para actualizar un usuario
 export const ActualizarUsuario = async (req, res) => {
     try {
+        // obtener el id del usuarui a actualizar
+        const id = parseInt(req.params.id);
+        // verificar si el id es un numero
+        if (isNaN(id)) {
+            console.error('ID inválido');
+            return res.status(400).json({ message: 'ID inválido' });
+        }
+
+        const UsuariosRepository = dataSource.getRepository(Usuarios);
         // obtener el usuario por id
-        const usuario = await Usuarios.findOne(req.params.id);
+        const usuario = await UsuariosRepository.findOneBy(id);
 
         // verificar si el usuario existe
         if (!usuario) {
-            console.error(`NO SE PUDO ACTUALIZAR EL USUARIO ALGO SUCEDIÓ, ${error.message}`);
-            return res.status(400).json({ message: 'NO SE PUDO ACTUALIZAR EL USUARIO ALGO SUCEDIÓ' });
+            console.error('No se encontro el usuario');
+            return res.status(404).json({ message: 'No se encontro el usuario' });
         }
         
         // recibir los datos del body
@@ -185,12 +203,12 @@ export const ActualizarUsuario = async (req, res) => {
 
         // verificar si los datos no estan vacios
         if (!nombres || !apellidos || !nombreusuario || !edad || !correo || !clave || estado === undefined) {
-            console.error('LOS DATOS NO PUEDEN ESTAR VACIOS');
-            return res.status(400).json({ message: 'LOS DATOS NO PUEDEN ESTAR VACIOS' });
+            console.error('Los datos no pueden estar vacios');
+            return res.status(400).json({ message: 'Los datos no pueden estar vacios' });
         }
 
         // actualizar el usuario
-        const ActualizarUsuario = await Usuarios.update(req.params.id, {
+        const ActualizarUsuario = await UsuariosRepository.update(req.params.id, {
             nombres,
             apellidos,
             nombreusuario,
@@ -202,14 +220,16 @@ export const ActualizarUsuario = async (req, res) => {
 
         // verificar si se actualizo el usuario
         if (!ActualizarUsuario) {
-            console.error(`NO SE PUDO ACTUALIZAR EL USUARIO ALGO SUCEDIÓ, ${error.message}`);
-            return res.status(400).json({ message: 'NO SE PUDO ACTUALIZAR EL USUARIO ALGO SUCEDIÓ' });
+            console.error('no se pudo actualizar el usuario algo sucedió');
+            return res.status(400).json({ message: 'no se pudo actualizar el usuario' });
         }
 
+        // obtener el usuario actualizado
+        const usuarioActualizado = await UsuariosRepository.findOneBy({ id });
         console.warn('Usuario actualizado correctamente');
         return res.status(200).json({
             message: 'Usuario actualizado correctamente',
-            usuario: ActualizarUsuario
+            usuario: usuarioActualizado,
         });
     } catch (error) {
         console.error(`NO SE PUDO ACTUALIZAR EL USUARIO: ${error.message}`);
@@ -220,25 +240,34 @@ export const ActualizarUsuario = async (req, res) => {
 // metodo para eliminar un usuario
 export const EliminarUsuario = async (req, res) => {
     try {
+        // obtener el id del usuario a eliminar
+        const id = parseInt(req.params.id);
+        // verificar si el id es un numero
+        if (isNaN(id)) {
+            console.error('ID inválido');
+            return res.status(400).json({ message: 'ID inválido' });
+        }
+
         // obtener el usuario por id
-        const usuario = await Usuarios.findOne(req.params.id);
+        const UsuariosRepository = dataSource.getRepository(Usuarios);
+        const usuario = await UsuariosRepository.findOneBy({ id });
+
         // verificar si el usuario existe
         if (!usuario) {
             return res.status(404).json({ message: 'Usuario no encontrado' });
         }
         // eliminar el usuario
-        const EliminarUsuario = await Usuarios.delete(req.params.id);
+        const EliminarUsuario = await UsuariosRepository.delete(id);
 
         // verificar si se elimino el usuario
-        if (!EliminarUsuario) {
-            console.error(`NO SE PUDO ELIMINAR EL USUARIO ALGO SUCEDIÓ, ${error.message}`);
-            return res.status(400).json({ message: 'NO SE PUDO ELIMINAR EL USUARIO ALGO SUCEDIÓ' });
+        if (!EliminarUsuario.affected) {
+            console.error('No se pudo eliminar el usuario');
+            return res.status(400).json({ message: 'No se pudo eliminar el usuario' });
         }
 
         console.warn('Usuario eliminado correctamente');
         return res.status(200).json({
-            message: 'Usuario eliminado correctamente',
-            usuario
+            message: 'Usuario eliminado correctamente'
         });
     } catch (error) {
         console.error(`NO SE PUDO ELIMINAR EL USUARIO: ${error.message}`);

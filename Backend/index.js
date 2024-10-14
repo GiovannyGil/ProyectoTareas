@@ -4,4 +4,4 @@ import app from './src/main.js'
 app.listen(app.get('port'))
 
 // mensaje de inicio
-console.log(`Servidor corriendo en el puerto ${app.get('port')}`)
+console.log(`Servidor corriendo en el puerto ${app.get('port')} y servidor local http://localhost:${app.get('port')}`)

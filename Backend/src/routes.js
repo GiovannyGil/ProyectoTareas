@@ -16,7 +16,14 @@ ruta.use('/tareas', TareasController)
 ruta.use('/habilidades', HabilidadesController)
 // url por defecto
 ruta.get('/', (req, res) => {
-    res.send('Hello World')
+    res.send(
+        'Bienvenido!\n' + 
+        'blas rutas para acceder a los datos son:\n' + 
+        '/auth: logeo, regitrarse, logout\n' +
+        '/usuarios: CRUD usuarios -> necesitas logearte\n' +
+        '/tareas: CRUD tareas -> necesitas logearte\n' +
+        '/habilidades: CRUD habilidades -> necesitas logearte\n'
+    )
 })
 
 export default ruta

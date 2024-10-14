@@ -1,5 +1,5 @@
 import { Router } from 'express'
-
+import { VerificarToken } from '../../auth/middlewares/verify.token.js'
 import * as Habilidades from '../services/Habilidades.Services.js'
 
 // importar middleware, validaciones, etc
@@ -7,11 +7,11 @@ import * as Habilidades from '../services/Habilidades.Services.js'
 const router = Router()
 
 // definir rutas ->
-router.post('/', Habilidades.CrearHabilidad)
-router.get('/', Habilidades.ObtenerHabilidades)
-router.get('/:id', Habilidades.ObtenerHabilidadPorId)
-router.get('/habilidad/:nombreHabilidad', Habilidades.ObtenerHabilidadNombre)
-router.put('/:id', Habilidades.ActualizarHabilidad) // put o patch
-router.delete('/:id', Habilidades.EliminarHabilidad)
+router.post('/', VerificarToken, Habilidades.CrearHabilidad)
+router.get('/', VerificarToken, Habilidades.ObtenerHabilidades)
+router.get('/:id', VerificarToken, Habilidades.ObtenerHabilidadPorId)
+router.get('/habilidad/:nombreHabilidad', VerificarToken, Habilidades.ObtenerHabilidadNombre)
+router.put('/:id', VerificarToken, Habilidades.ActualizarHabilidad) // put o patch
+router.delete('/:id', VerificarToken, Habilidades.EliminarHabilidad)
 
 export default router

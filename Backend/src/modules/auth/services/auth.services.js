@@ -2,6 +2,12 @@ import { Usuarios } from "../models/Usuarios.model.js";
 import {ObtenerUsuarioNombre} from '../../usuarios/services/Usuarios.Services.js'
 import bcryptjs from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import {randomUUID} from 'crypto'
+import { Tokens } from "../models/auth.model.js";
+
+// Obtener el repositorio de usuarios
+const usuarioRepository = getRepository(Usuarios);
+const tokenRepository = getRepository(Tokens)
 
 // Método para registrar un nuevo usuario
 export const RegistrarUsuario = async (req, res) => {
@@ -13,6 +19,7 @@ export const RegistrarUsuario = async (req, res) => {
             console.error('LOS DATOS NO PUEDEN ESTAR VACÍOS');
             return res.status(400).json({ message: 'LOS DATOS NO PUEDEN ESTAR VACÍOS' });
         }
+
 
         // Verificar si el usuario ya existe
         // const usuarioExiste = await Usuarios.findOne({ where: { nombreusuario } });
@@ -32,6 +39,7 @@ export const RegistrarUsuario = async (req, res) => {
 
         // Crear un nuevo usuario
         const nuevoUsuario = await Usuarios.create({
+            uuid: randomUUID(),
             nombres,
             apellidos,
             nombreusuario,
@@ -42,7 +50,7 @@ export const RegistrarUsuario = async (req, res) => {
         });
 
         // Guardar el nuevo usuario
-        await nuevoUsuario.save();
+        await usuarioRepository.save(nuevoUsuario);
         console.warn('Usuario registrado correctamente');
         return res.status(201).json({
             message: 'Usuario registrado correctamente',
@@ -71,7 +79,7 @@ export const IniciarSesion = async (req, res) => {
         const usuario = await ObtenerUsuarioNombre(nombreusuario)
         if (!usuario) {
             console.error('USUARIO NO ENCONTRADO');
-            return res.status(400).json({ message: 'USUARIO NO ENCONTRADO' });
+            return res.status(404).json({ message: 'USUARIO NO ENCONTRADO' });
         }
 
         // Verificar la contraseña
@@ -84,9 +92,15 @@ export const IniciarSesion = async (req, res) => {
         // Generar token JWT
         const token = jwt.sign(
             { id: usuario.id, nombreusuario: usuario.nombreusuario },
-            process.env.JWT_SECRET,
+            process.env.JWT_SECRET || 'palabrasecreta',
             { expiresIn: '1h' }
         );
+
+        // verificar si el token se generó correctamente
+        if (!token) {
+            console.error('NO SE PUDO GENERAR EL TOKEN');
+            return res.status(500).json({ message: 'NO SE PUDO GENERAR EL TOKEN' });
+        }
 
         console.warn('Inicio de sesión exitoso');
         return res.status(200).json({
@@ -115,24 +129,24 @@ export const CerrarSesion = async (req, res) => {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
         // Verificar si el usuario existe (opcional, pero es buena práctica)
-        // const usuario = await Usuarios.findOne({ where: { id: decoded.id } });
-        const usuario = await ObtenerUsuarioNombre(nombreusuario)
+        const usuario = await usuarioRepository.findOne({ where: { id: decoded.id } });
+        // const usuario = await ObtenerUsuarioNombre(nombreusuario)
         if (!usuario) {
             console.error('Usuario no encontrado');
             return res.status(404).json({ message: 'Usuario no encontrado' });
         }
 
-        // Actualizar la tabla de tokens para marcar el token como revocado
-        const actualizarToken = await TokenModel.update(
-            { revoked: true },
-            { where: { token: token } } // Suponiendo que tienes la columna `token` en tu tabla
-        );
-
-        // Verificar si se actualizó correctamente
-        if (!actualizarToken) {
-            console.error('No se pudo revocar el token');
-            return res.status(500).json({ message: 'No se pudo revocar el token' });
+        // Revocar el token
+        const tokenRevocado = await tokenRepository.findOne({ where: { token } });
+        if (tokenRevocado && tokenRevocado.revocado) {
+            console.error('Token ya revocado');
+            return res.status(200).json({ message: 'Token ya revocado' });
         }
+
+        // Guardar el token revocado si no esta revocado
+        await tokenRepository.save({ token, revoked: true });
+        
+
         console.warn('Sesión cerrada y token revocado correctamente');
         return res.status(200).json({ message: 'Sesión cerrada y token revocado correctamente' });
     } catch (error) {
