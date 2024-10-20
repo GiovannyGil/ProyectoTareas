@@ -7,7 +7,10 @@ const ruta = Express()
 import UsuariosController from './modules/usuarios/controllers/Usuarios.Controller.js'
 import TareasController from './modules/tareas/controllers/Tarea.Controller.js';
 import HabilidadesController from './modules/habilidades/controllers/Habilidades.Controller.js';
+import AuthController from './modules/auth/controllers/auth.controller.js'
 
+// modulo auth
+ruta.use('/auth', AuthController)
 // modulo usuarios
 ruta.use('/usuarios', UsuariosController)
 // modulo tareas

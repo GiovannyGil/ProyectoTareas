@@ -1,13 +1,15 @@
-import { Usuarios } from "../models/Usuarios.model.js";
+import { Usuarios } from "../../usuarios/models/Usuarios.model.js";
 import {ObtenerUsuarioNombre} from '../../usuarios/services/Usuarios.Services.js'
 import bcryptjs from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import {randomUUID} from 'crypto'
 import { Tokens } from "../models/auth.model.js";
+import { dataSource } from '../../../database/conexion.js'
+
 
 // Obtener el repositorio de usuarios
-const usuarioRepository = getRepository(Usuarios);
-const tokenRepository = getRepository(Tokens)
+const usuarioRepository = dataSource.getRepository(Usuarios);
+const tokenRepository = dataSource.getRepository(Tokens)
 
 // Método para registrar un nuevo usuario
 export const RegistrarUsuario = async (req, res) => {
@@ -66,6 +68,12 @@ export const RegistrarUsuario = async (req, res) => {
 // Método para iniciar sesión
 export const IniciarSesion = async (req, res) => {
     try {
+        // Verificar que req.body esté definido
+        if (!req.body) {
+            console.error('Cuerpo de la solicitud no proporcionado');
+            return res.status(400).json({ message: 'Cuerpo de la solicitud no proporcionado' });
+        }
+
         const { nombreusuario, clave } = req.body;
 
         // Verificar si los campos están vacíos
@@ -74,9 +82,9 @@ export const IniciarSesion = async (req, res) => {
             return res.status(400).json({ message: 'LOS DATOS NO PUEDEN ESTAR VACÍOS' });
         }
 
-        // Buscar el usuario en la base de datos
-        // const usuario = await Usuarios.findOne({ where: { nombreusuario } });
-        const usuario = await ObtenerUsuarioNombre(nombreusuario)
+        // Obtener el usuario por nombre
+        // const usuario = await ObtenerUsuarioNombre(correo);
+        const usuario = await usuarioRepository.findOne({ where: { nombreusuario } });
         if (!usuario) {
             console.error('USUARIO NO ENCONTRADO');
             return res.status(404).json({ message: 'USUARIO NO ENCONTRADO' });
@@ -89,14 +97,14 @@ export const IniciarSesion = async (req, res) => {
             return res.status(400).json({ message: 'CONTRASEÑA INCORRECTA' });
         }
 
-        // Generar token JWT
+        // Generar el token JWT
         const token = jwt.sign(
             { id: usuario.id, nombreusuario: usuario.nombreusuario },
             process.env.JWT_SECRET || 'palabrasecreta',
             { expiresIn: '1h' }
         );
 
-        // verificar si el token se generó correctamente
+        // Verificar que el token fue generado
         if (!token) {
             console.error('NO SE PUDO GENERAR EL TOKEN');
             return res.status(500).json({ message: 'NO SE PUDO GENERAR EL TOKEN' });
@@ -113,6 +121,7 @@ export const IniciarSesion = async (req, res) => {
         return res.status(500).json({ message: 'Error del servidor', error: error.message });
     }
 };
+
 
 // Método para cerrar sesión (revocar token)
 export const CerrarSesion = async (req, res) => {
