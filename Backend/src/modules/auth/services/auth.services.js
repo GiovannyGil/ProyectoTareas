@@ -127,7 +127,8 @@ export const IniciarSesion = async (req, res) => {
 export const CerrarSesion = async (req, res) => {
     try {
         // Obtener el token desde las cabeceras o el body (dependiendo de cómo se esté enviando)
-        const token = req.headers['authorization']?.split(' ')[1] || req.body.token;
+        const token = req.headers['authorization']?.split(' ')[1] || req.body.token
+        console.log(token)
 
         if (!token) {
             console.error('Token no proporcionado');

@@ -1,6 +1,11 @@
 import Express from "express"
 import cors from "cors"
 import morgan from "morgan"
+import dotenv from 'dotenv';
+import jwt from 'jsonwebtoken';
+
+// configurar variables de entorno
+dotenv.config();
 
 // inicair express
 const app = Express()
@@ -23,7 +28,6 @@ app.use((req, res) => {
 // definir puerto
 const PORT = 3000
 app.set('port', PORT)
-
 
 // conexion base de datos
 import { initializeDatabase } from './database/conexion.js'
