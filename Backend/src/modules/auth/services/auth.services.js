@@ -126,62 +126,32 @@ export const IniciarSesion = async (req, res) => {
 // Método para cerrar sesión (revocar token)
 export const CerrarSesion = async (req, res) => {
     try {
-        // Obtener el token desde las cabeceras o el body (dependiendo de cómo se esté enviando)
-        const token = req.headers['authorization']?.split(' ')[1] || req.body.token
-        console.log(token)
-
+        // Obtener el token desde el encabezado `x-auth-token` o `Authorization`
+        const token = req.header('x-auth-token') || req.header('Authorization')?.split(' ')[1];
         if (!token) {
-            console.error('Token no proporcionado');
             return res.status(400).json({ message: 'Token no proporcionado' });
         }
 
-        // Verificar el token para obtener el payload (en caso de que sea necesario verificar quién está cerrando sesión)
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-        // Verificar si el usuario existe (opcional, pero es buena práctica)
-        const usuario = await usuarioRepository.findOne({ where: { id: decoded.id } });
-        // const usuario = await ObtenerUsuarioNombre(nombreusuario)
-        if (!usuario) {
-            console.error('Usuario no encontrado');
-            return res.status(404).json({ message: 'Usuario no encontrado' });
+        // Decodificar el token para obtener la fecha de expiración
+        const decodedToken = jwt.decode(token);
+        if (!decodedToken) {
+            return res.status(400).json({ message: 'Token inválido' });
         }
 
-        // Revocar el token
-        const tokenRevocado = await tokenRepository.findOne({ where: { token } });
-        if (tokenRevocado && tokenRevocado.revocado) {
-            console.error('Token ya revocado');
-            return res.status(200).json({ message: 'Token ya revocado' });
-        }
+        // Guardar el token como revocado en la base de datos
+        const tokenRevocado = {
+            token: token,
+            expiracion: new Date(decodedToken.exp * 1000),  // Fecha de expiración del token
+            revoked: true
+        };
 
-        // Guardar el token revocado si no esta revocado
-        await tokenRepository.save({ token, revoked: true });
-        
+        await tokenRepository.save(tokenRevocado);
 
-        console.warn('Sesión cerrada y token revocado correctamente');
-        return res.status(200).json({ message: 'Sesión cerrada y token revocado correctamente' });
+        return res.status(200).json({ message: 'Sesión cerrada exitosamente' });
     } catch (error) {
         console.error(`Error al cerrar sesión: ${error.message}`);
-        return res.status(500).json({ message: 'Error del servidor', error: error.message });
+        return res.status(500).json({ message: 'Error al cerrar sesión' });
     }
 };
 
 
-// Método para obtener el perfil del usuario autenticado
-export const ObtenerPerfil = async (req, res) => {
-    try {
-        const usuario = await Usuarios.findByPk(req.usuario.id);
-
-        if (!usuario) {
-            return res.status(404).json({ message: 'Usuario no encontrado' });
-        }
-
-        console.warn('Perfil obtenido correctamente');
-        return res.status(200).json({
-            message: 'Perfil obtenido correctamente',
-            usuario
-        });
-    } catch (error) {
-        console.error(`NO SE PUDO OBTENER EL PERFIL: ${error.message}`);
-        return res.status(500).json({ message: 'Error del servidor', error: error.message });
-    }
-};
