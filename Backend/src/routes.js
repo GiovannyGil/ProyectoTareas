@@ -1,4 +1,5 @@
 import Express from "express"
+// import { VerificarToken } from './modules/auth/middlewares/verify.token.js'
 
 // inicair express
 const ruta = Express()
@@ -9,6 +10,7 @@ import TareasController from './modules/tareas/controllers/Tarea.Controller.js';
 import HabilidadesController from './modules/habilidades/controllers/Habilidades.Controller.js';
 import AuthController from './modules/auth/controllers/auth.controller.js'
 
+// ruta.use(VerificarToken)
 // modulo auth
 ruta.use('/auth', AuthController)
 // modulo usuarios

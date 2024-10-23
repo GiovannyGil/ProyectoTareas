@@ -3,6 +3,7 @@ import cors from "cors"
 import morgan from "morgan"
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
+import { limpiarTokensExpirados } from './modules/auth/middlewares/verify.token.js'
 
 // configurar variables de entorno
 dotenv.config();
@@ -24,6 +25,11 @@ app.use('/api', ruta)
 app.use((req, res) => {
     res.status(404).json({ message: 'Ruta no encontrada, la ruta a la que debe ingresar es: http://localhost:3000/api' })
 })    
+
+// Ejecutar limpieza de tokens cada 24 horas
+setInterval(limpiarTokensExpirados, 24 * 60 * 60 * 1000);
+
+
 
 // definir puerto
 const PORT = 3000

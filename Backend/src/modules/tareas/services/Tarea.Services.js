@@ -15,11 +15,13 @@ export const CrearTarea = async (req, res) => {
     try {
         console.log(req.body);
         // recibir los datos del body
-        const {titulo, descripcion, dificultad, usuarioId, habilidadesIds } = req.body;
+        const {nombre, descripcion, dificultad, habilidadesIds } = req.body;
+        const usuarioId = req.usuario.id;
 
         // verificar si los datos no estan vacios
         if (!nombre || !descripcion || !dificultad || !usuarioId || !habilidadesIds || habilidadesIds.length === 0) {
             console.error('LOS DATOS NO PUEDEN ESTAR VACÍOS');
+            console.log('el campo vacio es: ', !nombre ? 'nombre' : !descripcion ? 'descripcion' : !dificultad ? 'dificultad' : !usuarioId ? 'usuarioId' : 'habilidadesIds');
             return res.status(400).json({ message: 'LOS DATOS NO PUEDEN ESTAR VACÍOS' });
         }
 
@@ -42,11 +44,11 @@ export const CrearTarea = async (req, res) => {
 
         // crear la tarea
         const tarea = tareaRepository.create({
-            titulo,
+            nombre,
             descripcion,
             dificultad,
-            usuario,
-            habilidades
+            usuarioId,
+            habilidadesIds: habilidades
         });
 
         // guardar la tarea

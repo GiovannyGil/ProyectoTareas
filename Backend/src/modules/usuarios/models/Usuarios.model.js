@@ -51,11 +51,6 @@ export const Usuarios = new EntitySchema(
             nullable: true,
             default: 0, // 0 -> 1 -> 2 -> 3 -> 4 -> 5
         },
-        fecharegistro: {
-            type: "timestamp",
-            nullable: false,
-            default: () => "CURRENT_TIMESTAMP",
-        },
         createdAt: {
             type: "timestamp",
             createDate: true,

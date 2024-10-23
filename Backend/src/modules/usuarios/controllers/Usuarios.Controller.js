@@ -12,7 +12,7 @@ router.get('/', VerificarToken, Usuarios.ObtenerUsuarios)
 router.get('/:id', VerificarToken, Usuarios.ObtenerUsuarioPorId)
 router.get('/usuario/:nombreusuario', VerificarToken, Usuarios.ObtenerUsuarioNombre)
 router.get('/correo/:correo', VerificarToken, Usuarios.ObtenerUsuarioCorreo)
-router.put('/:id', VerificarToken, Usuarios.ActualizarUsuario) // put o patch
+router.patch('/:id', VerificarToken, Usuarios.ActualizarUsuario) // put o patch
 router.delete('/:id', VerificarToken, Usuarios.EliminarUsuario)
 
 export default router

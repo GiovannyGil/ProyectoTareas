@@ -59,3 +59,5 @@ export const Tareas = new EntitySchema(
         }
     }
 })
+
+export default Tareas

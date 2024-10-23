@@ -7,7 +7,7 @@ import * as Tareas from '../services/Tarea.Services.js'
 const router = Router()
 
 // definir rutas ->
-router.post('/tareas', VerificarToken, Tareas.CrearTarea)
+router.post('/', VerificarToken, Tareas.CrearTarea)
 router.get('/', VerificarToken, Tareas.ObtenerTareas)
 router.get('/:id', VerificarToken, Tareas.ObtenerTareaPorId)
 router.put('/:id', VerificarToken, Tareas.ActualizarTarea) // put o patch

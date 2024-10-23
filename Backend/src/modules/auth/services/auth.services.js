@@ -110,6 +110,18 @@ export const IniciarSesion = async (req, res) => {
             return res.status(500).json({ message: 'NO SE PUDO GENERAR EL TOKEN' });
         }
 
+        const tokenInfo = jwt.decode(token);
+        
+        // Guardar el token activo en la base de datos
+        const tokenActivo = await tokenRepository.create({
+            token: token,
+            expiracion: new Date(tokenInfo.exp * 1000),
+            revoked: false,
+            usuario: { id: usuario.id }
+        });
+
+        await tokenRepository.save(tokenActivo);
+
         console.warn('Inicio de sesión exitoso');
         return res.status(200).json({
             message: 'Inicio de sesión exitoso',
@@ -126,31 +138,25 @@ export const IniciarSesion = async (req, res) => {
 // Método para cerrar sesión (revocar token)
 export const CerrarSesion = async (req, res) => {
     try {
-        // Obtener el token desde el encabezado `x-auth-token` o `Authorization`
-        const token = req.header('x-auth-token') || req.header('Authorization')?.split(' ')[1];
-        if (!token) {
-            return res.status(400).json({ message: 'Token no proporcionado' });
-        }
+        const token = req.token; // Obtenido del middleware VerificarToken
+        const usuario = req.usuario;
 
-        // Decodificar el token para obtener la fecha de expiración
-        const decodedToken = jwt.decode(token);
-        if (!decodedToken) {
-            return res.status(400).json({ message: 'Token inválido' });
-        }
-
-        // Guardar el token como revocado en la base de datos
-        const tokenRevocado = {
+        // Crear registro de token revocado
+        const tokenRevocado = await tokenRepository.create({
             token: token,
-            expiracion: new Date(decodedToken.exp * 1000),  // Fecha de expiración del token
-            revoked: true
-        };
+            expiracion: new Date(usuario.exp * 1000), // Convertir exp de JWT a fecha
+            revoked: true,
+            usuario: { id: usuario.id } // Relacionar con el usuario
+        });
 
         await tokenRepository.save(tokenRevocado);
 
-        return res.status(200).json({ message: 'Sesión cerrada exitosamente' });
+        console.warn('Sesión cerrada exitosamente');
+        return res.status(200).json({ message: 'SESIÓN CERRADA EXITOSAMENTE' });
+
     } catch (error) {
-        console.error(`Error al cerrar sesión: ${error.message}`);
-        return res.status(500).json({ message: 'Error al cerrar sesión' });
+        console.error(`ERROR AL CERRAR SESIÓN: ${error.message}`);
+        return res.status(500).json({ message: 'Error del servidor', error: error.message });
     }
 };
 
