@@ -3,14 +3,14 @@ import { dataSource } from '../../../database/conexion.js'
 import bcryptjs from 'bcryptjs';
 import { randomUUID } from 'crypto'
 import cron from 'node-cron';
-import { LessThan } from 'typeorm';
+import { IsNull, LessThan } from 'typeorm';
+
+// Obtener el repositorio de la entidad Usuarios
+const UsuariosRepository = dataSource.getRepository(Usuarios);
 
 // metodo para crar Usuario
 export const CrearUsuario = async (req, res) => {
     try {
-        // Obtener el repositorio de la entidad Usuarios
-        const UsuariosRepository = dataSource.getRepository(Usuarios);
-
         // Recibir los datos del body
         const { nombres, apellidos, nombreusuario, edad, correo, clave, estado } = req.body;
 
@@ -62,11 +62,8 @@ export const CrearUsuario = async (req, res) => {
 // Método para obtener todos los usuarios
 export const ObtenerUsuarios = async (req, res) => {
     try {
-        // Obtener el repositorio de la entidad Usuarios
-        const UsuariosRepository = dataSource.getRepository(Usuarios);
-
         // Obtener todos los usuarios
-        const usuarios = await UsuariosRepository.find();
+        const usuarios = await UsuariosRepository.find({ where: { deletedAt: IsNull() } });
 
         // Verificar si no hay usuarios
         if (!usuarios || usuarios.length === 0) {
@@ -97,7 +94,7 @@ export const ObtenerUsuarioPorId = async (req, res) => {
         }
         // obtener el usuario por id
         const UsuariosRepository = dataSource.getRepository(Usuarios);
-        const usuario = await UsuariosRepository.findOneBy({ id, deletedAt: null });
+        const usuario = await UsuariosRepository.findOneBy({ id, deletedAt: IsNull() });
 
         if(usuario.deletedAt != null){
             console.error(`Usuario eliminado`);
@@ -132,8 +129,7 @@ export const ObtenerUsuarioNombre= async (req, res) => {
         }
 
         // obtener el usuario por nombre de usuario
-        const UsuariosRepository = dataSource.getRepository(Usuarios);
-        const usuario = await UsuariosRepository.findOneBy({nombreusuario: nombreusuario});
+        const usuario = await UsuariosRepository.findOneBy({nombreusuario: nombreusuario, deletedAt: IsNull()});
 
         // verificar si el usuario existe
         if (!usuario) {
@@ -164,7 +160,6 @@ export const ObtenerUsuarioCorreo = async (req, res) => {
         }
 
         // obtener el usuario por correo
-        const UsuariosRepository = dataSource.getRepository(Usuarios);
         const usuario = await UsuariosRepository.findOneBy({correo: correo});
 
         // verificar si el usuario existe
@@ -194,8 +189,6 @@ export const ActualizarUsuario = async (req, res) => {
             console.error('ID inválido');
             return res.status(400).json({ message: 'ID inválido' });
         }
-
-        const UsuariosRepository = dataSource.getRepository(Usuarios);
         // obtener el usuario por id
         const usuario = await UsuariosRepository.findOneBy(id);
 
@@ -256,8 +249,6 @@ export const EliminarUsuario = async (req, res) => {
             return res.status(400).json({ message: 'ID inválido, debe ser un número' });
         }
 
-        // obtener el usuario por id
-        const UsuariosRepository = dataSource.getRepository(Usuarios);
         // encontrar el usuario por id
         const usuario = await UsuariosRepository.findOneBy({ id });
 
@@ -288,8 +279,6 @@ const eliminarUsuariosPermanente = async () => {
     const fechaLimite = new Date();
     fechaLimite.setDate(fechaLimite.getDate() - 30);
 
-    // obtener el repositorio de la entidad Usuarios
-    const usuarioRepository = dataSource.getRepository(Usuarios);
     // obtener los usuarios a eliminar
     const usuariosParaEliminar = await usuarioRepository.find({
         where: { deletedAt: LessThan(fechaLimite) }

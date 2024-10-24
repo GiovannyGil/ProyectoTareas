@@ -3,7 +3,7 @@ import { Usuarios } from "../../usuarios/models/Usuarios.model.js";
 import { Habilidades } from "../../habilidades/models/Habilidades.model.js";
 import { dataSource } from '../../../database/conexion.js'
 import cron from 'node-cron';
-import { In, LessThan } from 'typeorm';
+import { In, LessThan, IsNull } from 'typeorm';
 
 // Obtener los repositorios
 const tareaRepository = dataSource.getRepository(Tareas);
@@ -54,7 +54,7 @@ export const CrearTarea = async (req, res) => {
 export const ObtenerTareas = async (req, res) => {
     try {
         // obtener todas las tareas
-        const tareas = await tareaRepository.find({ where: { deletedAt: null },
+        const tareas = await tareaRepository.find({ where: { deletedAt: IsNull() },
             relations: ['usuario', 'habilidades'],
         });
 
@@ -93,7 +93,7 @@ export const ObtenerTareaPorId = async (req, res) => {
         }
 
         // obtener la tarea por id
-        const tarea = await tareaRepository.findOne({ where: { id }, relations: ['usuario', 'habilidades'] });
+        const tarea = await tareaRepository.findOne({ where: { id, deletedAt: IsNull() }, relations: ['usuario', 'habilidades'] });
         if (!tarea) {
             console.error('TAREA NO ENCONTRADA');
             return res.status(404).json({ message: 'TAREA NO ENCONTRADA' });

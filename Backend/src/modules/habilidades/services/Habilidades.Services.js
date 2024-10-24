@@ -1,7 +1,11 @@
 import { Habilidades } from "../models/Habilidades.model.js";
 import { dataSource } from '../../../database/conexion.js'
 import cron from 'node-cron';
-import { LessThan } from 'typeorm';
+import { IsNull, LessThan } from 'typeorm';
+
+
+// Obtener el repositorio de Habilidades
+const habilidadesRepository = dataSource.getRepository(Habilidades);
 
 // metodo para crear habilidad
 export const CrearHabilidad = async (req, res) => {
@@ -17,9 +21,6 @@ export const CrearHabilidad = async (req, res) => {
         if(isNaN(nivel) || nivel < 0 || nivel.isString){
             return res.status(400).json({message: 'El nivel debe ser un numero mayor o igual a 0'});
         }
-
-        // Obtener el repositorio de Habilidades
-        const habilidadesRepository = dataSource.getRepository(Habilidades);
 
         // crear la habilidad
         const nuevaHabilidad = habilidadesRepository.create({
@@ -52,11 +53,9 @@ export const CrearHabilidad = async (req, res) => {
 // metodo para obtener todas las habilidades
 export const ObtenerHabilidades = async (req, res) => {
     try {
-        // Obtener el repositorio de Habilidades
-        const habilidadesRepository = dataSource.getRepository(Habilidades);
         
         // obtener todas las habilidades
-        const habilidades = await habilidadesRepository.find({ where: { deletedAt: null } });
+        const habilidades = await habilidadesRepository.find({ where: { deletedAt: IsNull() } });
 
         // verificar si se obtuvieron las habilidades
         if (habilidades.length === 0) {
@@ -86,15 +85,12 @@ export const ObtenerHabilidadPorId = async (req, res) => {
             console.error(`EL ID DEBE SER UN NÚMERO`);
             return res.status(400).json({ message: 'EL ID DEBE SER UN NÚMERO' });
         }
-
-        // Obtener el repositorio de Habilidades
-        const habilidadesRepository = dataSource.getRepository(Habilidades);
         
         // obtener la habilidad por id, asegurándote que deletedAt sea null
         const habilidad = await habilidadesRepository.findOne({
             where: {
                 id: parseInt(id),
-                deletedAt: null
+                deletedAt: IsNull()
             }
         });
 
@@ -129,7 +125,7 @@ export const ObtenerHabilidadNombre = async (req, res) => {
         const nombre = req.params.nombre;
 
         // obtener la habilidad por nombre
-        const habilidad = await habilidadesRepository.findOneBy({nombre: nombre});
+        const habilidad = await habilidadesRepository.findOneBy({nombre: nombre, deletedAt: IsNull()});
 
         // verficar si la habilidad existe
         if (!habilidad) {
@@ -207,16 +203,18 @@ export const ActualizarHabilidad = async (req, res) => {
 // metodo para eliminar una habilidad
 export const EliminarHabilidad = async (req, res) => {
     try {
+        // obtener el id
         const id = req.params.id;
 
+        // Verificar si el ID es un número
         if (isNaN(id)) {
             return res.status(400).json({ message: 'EL ID DEBE SER UN NÚMERO' });
         }
-
-        const habilidadesRepository = dataSource.getRepository(Habilidades);
         
+        // Obtener la habilidad por ID
         const habilidad = await habilidadesRepository.findOneBy({ id });
 
+        // Verificar si la habilidad existe
         if (!habilidad) {
             return res.status(404).json({ message: 'Habilidad no encontrada' });
         }
@@ -224,6 +222,7 @@ export const EliminarHabilidad = async (req, res) => {
         // Establecer deletedAt a la fecha actual
         habilidad.deletedAt = new Date();
         
+        // Guardar los cambios
         await habilidadesRepository.save(habilidad);
 
         return res.status(200).json({ message: 'Habilidad eliminada correctamente' });
@@ -240,9 +239,6 @@ const eliminarHabilidadesPermanente = async () => {
     // optener la fecha limite
     const fechaLimite = new Date();
     fechaLimite.setDate(fechaLimite.getDate() - 30);
-
-    // Obtener el repositorio de Habilidades
-    const habilidadRepository = dataSource.getRepository(Habilidades);
 
     // obtener las habilidades para eliminar
     const habilidadesParaEliminar = await habilidadRepository.find({
