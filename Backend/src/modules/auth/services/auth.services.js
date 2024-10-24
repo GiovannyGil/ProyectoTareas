@@ -161,3 +161,22 @@ export const CerrarSesion = async (req, res) => {
 };
 
 
+// funcion para eliminar los tokens expirados y revocados de la base de datos cada 24 horas
+const limpiarTokensExpirados = async () => {
+    try {
+        // Obtener los tokens expirados y revocados
+        const tokensExpirados = await tokenRepository.find({ where: { expiracion: new Date() } });
+        const tokensRevocados = await tokenRepository.find({ where: { revoked: true } });
+
+        // Eliminar los tokens expirados y revocados
+        await tokenRepository.remove(tokensExpirados);
+        await tokenRepository.remove(tokensRevocados);
+
+        console.warn('Tokens expirados y revocados eliminados correctamente');
+    } catch (error) {
+        console.error(`ERROR AL ELIMINAR TOKENS EXPIRADOS Y REVOCADOS: ${error.message}`);
+    }
+};
+
+// ejecutar la limpieza de tokens cada 24 horas
+setInterval(limpiarTokensExpirados, 24 * 60 * 60 * 1000);

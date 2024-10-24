@@ -2,6 +2,8 @@ import { Usuarios } from "../models/Usuarios.model.js";
 import { dataSource } from '../../../database/conexion.js'
 import bcryptjs from 'bcryptjs';
 import { randomUUID } from 'crypto'
+import cron from 'node-cron';
+import { LessThan } from 'typeorm';
 
 // metodo para crar Usuario
 export const CrearUsuario = async (req, res) => {
@@ -95,7 +97,12 @@ export const ObtenerUsuarioPorId = async (req, res) => {
         }
         // obtener el usuario por id
         const UsuariosRepository = dataSource.getRepository(Usuarios);
-        const usuario = await UsuariosRepository.findOneBy({ id });
+        const usuario = await UsuariosRepository.findOneBy({ id, deletedAt: null });
+
+        if(usuario.deletedAt != null){
+            console.error(`Usuario eliminado`);
+            return res.status(404).json({ message: 'Usuario eliminado' });
+        }
 
         // verificar si no existe el usuario
         if (!usuario) {
@@ -242,28 +249,26 @@ export const EliminarUsuario = async (req, res) => {
     try {
         // obtener el id del usuario a eliminar
         const id = parseInt(req.params.id);
+
         // verificar si el id es un numero
         if (isNaN(id)) {
-            console.error('ID inválido');
-            return res.status(400).json({ message: 'ID inválido' });
+            console.error('ID inválido, debe ser un número');
+            return res.status(400).json({ message: 'ID inválido, debe ser un número' });
         }
 
         // obtener el usuario por id
         const UsuariosRepository = dataSource.getRepository(Usuarios);
+        // encontrar el usuario por id
         const usuario = await UsuariosRepository.findOneBy({ id });
 
         // verificar si el usuario existe
         if (!usuario) {
             return res.status(404).json({ message: 'Usuario no encontrado' });
         }
-        // eliminar el usuario
-        const EliminarUsuario = await UsuariosRepository.delete(id);
 
-        // verificar si se elimino el usuario
-        if (!EliminarUsuario.affected) {
-            console.error('No se pudo eliminar el usuario');
-            return res.status(400).json({ message: 'No se pudo eliminar el usuario' });
-        }
+        // eliminar el usuario (soft delete)
+        usuario.deletedAt = new Date(); // Marca el usuario como eliminado
+        await UsuariosRepository.save(usuario);
 
         console.warn('Usuario eliminado correctamente');
         return res.status(200).json({
@@ -274,3 +279,28 @@ export const EliminarUsuario = async (req, res) => {
         return res.status(500).json({message: 'Error del servidor', error: error.message});
     }
 }
+
+
+
+// Función para eliminar usuarios permanentes cada 30 días
+const eliminarUsuariosPermanente = async () => {
+    // optener la fecha limite
+    const fechaLimite = new Date();
+    fechaLimite.setDate(fechaLimite.getDate() - 30);
+
+    // obtener el repositorio de la entidad Usuarios
+    const usuarioRepository = dataSource.getRepository(Usuarios);
+    // obtener los usuarios a eliminar
+    const usuariosParaEliminar = await usuarioRepository.find({
+        where: { deletedAt: LessThan(fechaLimite) }
+    });
+
+    // eliminar los usuarios permanentemente
+    if (usuariosParaEliminar.length > 0) {
+        await usuarioRepository.delete({ deletedAt: LessThan(fechaLimite) });
+        console.log(`Eliminados permanentemente ${usuariosParaEliminar.length} usuarios.`);
+    }
+};
+
+// Programar un cron job que se ejecute diariamente
+cron.schedule('0 0 * * *', eliminarUsuariosPermanente);
