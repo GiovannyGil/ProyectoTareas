@@ -10,4 +10,13 @@ import { RouterOutlet } from '@angular/router';
 })
 export class AppComponent {
   title = 'FrontEnd';
+
+  // api del backedn
+  private api : string = 'http://localhost:3000/api/'
+
+  // llamar api en consola
+  constructor() {
+    console.log(this.api)
+  }
+
 }
