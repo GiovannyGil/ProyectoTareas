@@ -1,1 +1,37 @@
-<p>register works!</p>
+<div class="register-container">
+    <div class="register-box">
+        <h2>Registro</h2>
+        <form (ngSubmit)="register()">
+        <div class="input-group">
+            <input [(ngModel)]="nombres" name="nombres" type="text" required />
+            <label>Nombres</label>
+        </div>
+        <div class="input-group">
+            <input [(ngModel)]="apellidos" name="apellidos" type="text" required />
+            <label>Apellidos</label>
+        </div>
+        <div class="input-group">
+            <input
+            [(ngModel)]="nombreusuario"
+            name="nombreusuario"
+            type="text"
+            required
+            />
+            <label>Nombre de Usuario</label>
+        </div>
+        <div class="input-group">
+            <input [(ngModel)]="edad" name="edad" type="number" required />
+            <label>Edad</label>
+        </div>
+        <div class="input-group">
+            <input [(ngModel)]="correo" name="correo" type="email" required />
+            <label>Correo</label>
+        </div>
+        <div class="input-group">
+            <input [(ngModel)]="clave" name="clave" type="password" required />
+            <label>Contraseña</label>
+        </div>
+        <button type="submit" class="register-button">Registrarse</button>
+        </form>
+    </div>
+</div>

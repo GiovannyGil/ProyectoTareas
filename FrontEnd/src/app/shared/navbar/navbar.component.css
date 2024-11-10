@@ -1,0 +1,38 @@
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #6a5acd;
+    color: #ffffff;
+  }
+  
+  .navbar-logo h1 {
+    font-size: 1.5em;
+    color: #ffffff;
+    margin: 0;
+  }
+  
+  .navbar-links {
+    list-style: none;
+    display: flex;
+    gap: 15px;
+    margin: 0;
+  }
+  
+  .navbar-links li {
+    display: inline;
+  }
+  
+  .navbar-links a {
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s;
+  }
+  
+  .navbar-links a:hover,
+  .navbar-links .active {
+    color: #d1b3ff; /* Color al hacer hover o cuando el enlace está activo */
+  }
+  

@@ -1,0 +1,104 @@
+/* Fondo del login */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(135deg, #6a5acd, #d16ba5);
+    font-family: Arial, sans-serif;
+}
+
+/* Caja de login */
+.login-box {
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    animation: fadeIn 0.8s ease;
+}
+
+.login-box h2 {
+    margin-bottom: 20px;
+    color: #333;
+    font-weight: 600;
+}
+
+  /* Animación de aparición */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Grupo de entradas de texto */
+.input-group {
+    position: relative;
+    margin-bottom: 30px;
+    width: 100%;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 10px 5px;
+    padding-left: 5px;
+    border: none;
+    border-bottom: 2px solid #d3d3d3;
+    outline: none;
+    font-size: 16px;
+    transition: border-color 0.3s;
+    background-color: transparent;
+    color: #333;
+}
+
+.input-group input:focus {
+    border-color: #6a5acd;
+}
+
+/* Estilo para las etiquetas */
+.input-group label {
+    position: absolute;
+    top: 50%;
+    left: 5px;
+    transform: translateY(-50%);
+    color: #999;
+    font-size: 16px;
+    pointer-events: none;
+    transition: 0.3s ease;
+}
+
+/* Animación cuando se enfoca en el campo de entrada */
+.input-group input:focus + label,
+.input-group input:not(:placeholder-shown) + label {
+    top: -10px;
+    font-size: 12px;
+    color: #6a5acd;
+}
+
+/* Botón de login */
+.login-button {
+    background-color: #6a5acd;
+    color: #ffffff;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 25px;
+    width: 100%;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    outline: none;
+}
+
+.login-button:hover {
+    background-color: #5b4fbf;
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}

@@ -1,0 +1,68 @@
+/* Contenedor principal */
+.landing-container {
+    text-align: center;
+    font-family: Arial, sans-serif;
+}
+
+  /* Estilo para el encabezado */
+.header {
+    background-color: #f0f0f0;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.header h1 {
+    font-size: 4em;
+    font-weight: bold;
+    color: #333;
+}
+
+
+.header p {
+    font-size: 1.1em;
+    color: #555;
+}
+
+  /* Contenedor de los botones */
+.buttons-container {
+    display: flex;
+    height: 70vh;
+}
+
+/* Estilos para las secciones de login y registro */
+.button-section {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-section {
+    background-color: #6a5acd; /* Color morado */
+}
+
+.register-section {
+    background-color: #d16ba5; /* Color rosa */
+}
+
+  /* Estilo de los botones */
+.button {
+    background-color: #e0d7d7;
+    width: 250px;
+    color: #333;
+    font-weight: bold;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 20px;
+    font-size: 1em;
+    cursor: pointer;
+    box-shadow: 0 0 25px 15px rgba(255, 255, 255, 0.5);
+    transition: background-color 0.3s;
+    transition: transform 0.5s;
+}
+
+.button:hover {
+    background-color: #cfc4c4;
+    transform: scale(1.05); /* Escala al 110% */
+    transition: transform 0.5s;
+}

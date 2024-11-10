@@ -18,10 +18,13 @@ export class LoginComponent {
   login(): void{
     this.authService.login(this.nombreusuario, this.clave).subscribe(
       () => {
-        this.router.navigate(['/'])
+        console.log('logeo existoso');
+        this.router.navigate(['/inicio']) // redirigir al inicio despues del logeo
+
       },
       (error) => {
         console.error('Error al iniciar sesión ', error)
+        alert('Error en las Credenciales')
       }
     )
   }

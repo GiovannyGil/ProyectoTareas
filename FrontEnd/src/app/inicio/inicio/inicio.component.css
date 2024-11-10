@@ -1,0 +1,27 @@
+.inicio-container {
+    text-align: center;
+    padding: 40px;
+  }
+  
+  .button-group {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+  }
+  
+  .module-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    background-color: #6a5acd;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .module-button:hover {
+    background-color: #5b4fbf;
+  }
+  
