@@ -1,0 +1,22 @@
+<app-navbar></app-navbar>
+<div class="crear-habilidad-container">
+    <h2>Crear Nueva Habilidad</h2>
+    <form (ngSubmit)="crearHabilidad()" class="habilidad-form">
+        <div class="form-group">
+            <label for="nombre">Nombre</label>
+            <input type="text" id="nombre" [(ngModel)]="nombre" name="nombre" required>    
+        </div>
+
+        <div class="form-group">
+            <label for="descripcion">Descripción</label>
+            <input type="text" id="descripcion" [(ngModel)]="descripcion" name="descripcion" required>
+    
+        </div>
+
+        <div class="form-group">
+            <label for="nivel">Nivel</label>
+            <input type="number" id="nivel" [(ngModel)]="nivel" name="nivel" required>
+        </div>
+        <button type="submit" class="submit-button">Crear</button>
+    </form>
+</div>

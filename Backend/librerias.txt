@@ -13,3 +13,20 @@ npm i typeorm mysql reflect-metadata --save
 - bcrypt: npm i bcrypt --> encriptacion de datos
 npm i bcryptjs
 npm i --save-dev @types/bcryptjs
+
+
+
+
+
+
+-- COLORES PARA MOSTRAR LOS MENSAJE POR CONSOLA
+
+/**
+ * Rojo: \x1b[31m
+ * Verde: \x1b[32m
+ * Amarillo: \x1b[33m
+ * Azul: \x1b[34m
+ * Magenta: \x1b[35m
+ * Cian: \x1b[36m
+ * Blanco: \x1b[37m
+ */

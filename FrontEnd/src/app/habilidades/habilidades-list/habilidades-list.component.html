@@ -1,5 +1,41 @@
 <app-navbar></app-navbar>
-<div class="content">
+<div class="habilidades-container">
   <!-- Aquí va el contenido específico de la vista de habilidades -->
   <h2>Gestión de Habilidades</h2>
+<!-- Botón para agregar una nueva habilidad -->
+  <button (click)="navegarAFormularioCrear()" class="add-button">
+    <fa-icon [icon]="faPlus"></fa-icon> Agregar Habilidad
+  </button>
+
+  <table class="habilidades-table">
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Nombre</th>
+      <th>Descripcion</th>
+      <th>Nivel</th>
+      <th>Acciones</th>
+    </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let habilidad of habilidades">
+        <td>{{ habilidad.id }}</td>
+        <td>{{ habilidad.nombre }}</td>
+        <td>{{ habilidad.descripcion }}</td>
+        <td>{{ habilidad.nivel }}</td>
+        <td>
+          <!-- Botón para actualizar -->
+          <button (click)="navegarAFormularioActualizar(habilidad.id)" class="action-button">
+            <fa-icon [icon]="faEdit"></fa-icon>
+          </button>
+
+          <!-- Botón para eliminar -->
+          <button (click)="eliminarHabilidad(habilidad.id)" class="action-button">
+            <fa-icon [icon]="faTrash"></fa-icon>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 </div>

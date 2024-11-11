@@ -20,9 +20,21 @@ export const dataSource = new DataSource({
 export const initializeDatabase = async () => {
   try {
     await dataSource.initialize();
-    console.warn('Base de datos conectada exitosamente',);
+    console.warn('\x1b[32m%s\x1b[0m', 'Base de datos conectada exitosamente',);
+
   } catch (error) {
     console.error('Error conectando la base de datos:', error.message);
     throw error.message; // Lanza el error si quieres manejarlo en otro lugar
   }
 };
+
+
+/**
+ * Rojo: \x1b[31m
+ * Verde: \x1b[32m
+ * Amarillo: \x1b[33m
+ * Azul: \x1b[34m
+ * Magenta: \x1b[35m
+ * Cian: \x1b[36m
+ * Blanco: \x1b[37m
+ */
