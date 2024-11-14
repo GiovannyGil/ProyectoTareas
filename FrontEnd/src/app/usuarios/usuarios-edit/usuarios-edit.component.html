@@ -1,0 +1,39 @@
+<app-navbar></app-navbar>
+
+<div class="edit-usuario-container">
+    <h2>Editar Usuario</h2>
+
+    <form (ngSubmit)="actualizarUsurio()" class="usuario-form">
+        <div class="form-group">
+            <label for="nombres">Nombres</label>
+            <input type="text" id="nombres" [(ngModel)]="nombres" required="">
+        </div>
+
+        <div class="form-group">
+            <label for="apelldios">Apellidos</label>
+            <input type="text" id="apellidos" [(ngModel)]="apellidos" required="">
+        </div>
+
+        <div class="form-group">
+            <label for="nombreusuario">NombreUsuario</label>
+            <input type="text" id="nombreusuario" [(ngModel)]="nombreusuario" required="">
+        </div>
+
+        <div class="form-group">
+            <label for="edad">Edad</label>
+            <input type="number" id="edad" [(ngModel)]="edad" required="">
+        </div>
+
+        <div class="form-group">
+            <label for="correo">Correo</label>
+            <input type="text" id="correo" [(ngModel)]="correo" required="">
+        </div>
+
+        <div class="form-group">
+            <label for="estado">Estado</label>
+            <input type="number" id="estado" [(ngModel)]="estado" required="">
+        </div>
+
+        <button type="submit" class="submit-button">Actualizar</button>
+    </form>
+</div>

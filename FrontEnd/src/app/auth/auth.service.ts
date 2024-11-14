@@ -25,7 +25,8 @@ export class AuthService {
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, {nombreusuario, clave}).pipe(
       tap((response) => {
         localStorage.setItem(this.tokenKey, response.token) // guardar el token en el localstorage
-        console.log('token', response.token);
+        // console.log('token', response.token);
+        this.programarCierreSesion() // programar el cierre de sesion
       })
     )
   }
@@ -44,15 +45,38 @@ export class AuthService {
     this.router.navigate(['/'])
   }
 
-
-  // metodo para verificar si está logeoado
-  isLoggedIn(): boolean {
-    return !!localStorage.getItem(this.tokenKey)
-  }
-
-
   // metodo obtener token
   getToken(): string | null {
     return localStorage.getItem(this.tokenKey)
+  }
+  
+  // metodo para obtener la fecha/tiempo de expiracion del token JWT
+  private obtenerFechaExpiracion(): number | null{
+    const token = this.getToken() // obtener el token
+    if (!token) return null // si no hay token, retornar null
+    
+    const payload = JSON.parse(atob(token.split('.')[1])) // decodificar la carga util del token
+    return payload.exp ? payload.exp * 1000 : null // convertir a milisegundos
+  }
+  
+  // metodo para programar cierre de sesion automatico
+  private programarCierreSesion(): void {
+    const fechaExpiracion = this.obtenerFechaExpiracion()
+    if(!fechaExpiracion) return // si no hay fecha salir
+    
+    const tiempoRestante = fechaExpiracion - Date.now() // 
+    if(tiempoRestante > 0) {
+      setTimeout(() => {
+        alert('El Token ha Expirado. Serás Redirigido al Inicio')
+        this.logout()
+      }, tiempoRestante)
+    }
+  }
+
+  // metodo para verificar si está logeoado
+  isLoggedIn(): boolean {
+    // verifica si el token actual es valido usando la fecha de expiración
+    const fechaExpiracion = this.obtenerFechaExpiracion()
+    return fechaExpiracion ? Date.now() < fechaExpiracion : false
   }
 }

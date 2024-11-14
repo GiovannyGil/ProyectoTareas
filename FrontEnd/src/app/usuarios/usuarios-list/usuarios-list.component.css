@@ -1,0 +1,53 @@
+.usuarios-container{
+    padding: 20px;
+}
+
+.add-button {
+    display: flex;
+    align-items: center;
+    background-color: #6a5acd;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+.add-button .material-icons {
+    margin-right: 5px;
+}
+
+.usuarios-table{
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.usuarios-table th, .usuarios-table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+.usuarios-table th {
+    background-color: #6a5acd;
+    color: white;
+}
+
+.action-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #6a5acd;
+    padding: 5px;
+}
+
+.action-button .material-icons {
+    font-size: 18px;
+}
+
+.usuarios-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}

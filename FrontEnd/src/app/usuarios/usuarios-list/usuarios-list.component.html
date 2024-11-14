@@ -1,5 +1,50 @@
 <app-navbar></app-navbar> <!-- Incluye el navbar -->
-<div class="content">
+<div class="usuarios-container">
   <h2>Gestión de Usuarios</h2>
+  
+  <!-- Boton pra agregar un nuevo usuario -->
+  <button (click)="FomularioCrear()" class="add-button">
+    <fa-icon [icon]="faPlus"></fa-icon>Agregar Usuario
+  </button>
+  
   <!-- Aquí iría el contenido específico para usuarios, como tablas, formularios, etc. -->
+  <table class="usuarios-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>UUID</th>
+        <th>Nombres</th>
+        <th>Apellidos</th>
+        <th>Nombre Usuario</th>
+        <th>Edad</th>
+        <th>Correo</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let usuario of usuarios">
+        <td>{{ usuario.id }}</td>
+        <td>{{ usuario.uuid }}</td>
+        <td>{{ usuario.nombres }}</td>
+        <td>{{ usuario.apellidos }}</td>
+        <td>{{ usuario.nombreusuario }}</td>
+        <td>{{ usuario.edad }}</td>
+        <td>{{ usuario.correo }}</td>
+        <td>{{ usuario.estado }}</td>
+        <td>
+          <!-- boton para actualizar -->
+          <button (click)="FormularioEditar(usuario.id)" class="action-button">
+            <fa-icon [icon]="faEdit"></fa-icon>
+          </button>
+
+          <!-- Botón para eliminar -->
+          <button (click)="eliminarUsuario(usuario.id)" class="action-button">
+            <fa-icon [icon]="faTrash"></fa-icon>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
 </div>
