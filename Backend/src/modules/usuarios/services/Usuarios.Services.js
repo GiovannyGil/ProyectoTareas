@@ -190,7 +190,7 @@ export const ActualizarUsuario = async (req, res) => {
             return res.status(400).json({ message: 'ID inválido' });
         }
         // obtener el usuario por id
-        const usuario = await UsuariosRepository.findOneBy(id);
+        const usuario = await UsuariosRepository.findOneBy({ id });
 
         // verificar si el usuario existe
         if (!usuario) {
@@ -199,27 +199,26 @@ export const ActualizarUsuario = async (req, res) => {
         }
         
         // recibir los datos del body
-        const { nombres, apellidos, nombreusuario, edad, correo, clave, estado } = req.body;
+        const { nombres, apellidos, nombreusuario, edad, correo, estado } = req.body;
 
         // verificar si los datos no estan vacios
-        if (!nombres || !apellidos || !nombreusuario || !edad || !correo || !clave || estado === undefined) {
+        if (!nombres || !apellidos || !nombreusuario || !edad || !correo || estado === undefined) {
             console.error('Los datos no pueden estar vacios');
             return res.status(400).json({ message: 'Los datos no pueden estar vacios' });
         }
 
         // actualizar el usuario
-        const ActualizarUsuario = await UsuariosRepository.update(req.params.id, {
+        const ActualizarUsuario = await UsuariosRepository.update(id, {
             nombres,
             apellidos,
             nombreusuario,
             edad,
             correo,
-            clave,
             estado
         })
 
         // verificar si se actualizo el usuario
-        if (!ActualizarUsuario) {
+        if (!ActualizarUsuario.affected === 0) {
             console.error('no se pudo actualizar el usuario algo sucedió');
             return res.status(400).json({ message: 'no se pudo actualizar el usuario' });
         }

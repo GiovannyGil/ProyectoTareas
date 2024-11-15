@@ -74,6 +74,6 @@ export class UsuariosListComponent {
 
   // ir al formulario editar
   FormularioEditar(id: number): void {
-    this.router.navigate(['/usuarios/editar', id])
+    this.router.navigate([`/usuarios/editar/${id}`]);
   }
 }

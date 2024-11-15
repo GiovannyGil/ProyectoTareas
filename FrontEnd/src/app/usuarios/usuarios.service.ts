@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class UsuariosService {
   // URL de la api modulo usuarios
-  private apiURL = 'http://localhost:3000/api/usuario'
+  private apiURL = 'http://localhost:3000/api/usuarios'
 
   // inyectar metodos http/recursos
   constructor(private http: HttpClient) { }
@@ -22,7 +22,7 @@ export class UsuariosService {
     })
 
     // hacer el pedido a la api
-    return this.http.get<any>(`${this.apiURL}s`, { headers })
+    return this.http.get<any>(`${this.apiURL}`, { headers })
   }
 
   // metodo para obtener usuarios por id
@@ -71,7 +71,7 @@ export class UsuariosService {
       'Authorization': `Bearer ${authToken}`
     })
 
-    return this.http.put<any>(`${this.apiURL}/${id}`, usuario, { headers })
+    return this.http.patch<any>(`${this.apiURL}/${id}`, usuario, { headers })
   }
   
 }

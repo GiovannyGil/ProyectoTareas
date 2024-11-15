@@ -22,17 +22,28 @@ export class UsuariosEditComponent {
     private router: Router
   ) {}
 
+  ngOnInit(): void {
+    // obtener el ID desde la ruta
+    this.id = +this.route.snapshot.paramMap.get('id')!;
+    console.log('ID obtenido: ', this.id);
+    if (this.id) {
+      this.cargarDatosUsuario(); // Solo carga los datos si el ID es válido
+    } else {
+      console.error('ID inválido para el usuario');
+    }
+  }
+
 
   // metodo para cargar los datos existentes}
   cargarDatosUsuario(): void {
     this.usuarioServide.ObtenerUsuario(this.id).subscribe(
       (response) => {
-        console.log(`Datos Obtenidos ${response}`);
+        console.log('Datos Obtenidos', response);
         const usuario = response.usuario // acceder a los datos
 
         // asignar los valores
         this.nombres = usuario.nombres
-        this.apellidos = usuario.apelldios
+        this.apellidos = usuario.apellidos
         this.nombreusuario = usuario.nombreusuario
         this.edad = usuario.edad
         this.correo = usuario.correo
@@ -45,7 +56,7 @@ export class UsuariosEditComponent {
 
 
   // metodo para actulizar
-  actualizarUsurio(): void {
+  actualizarUsuario(): void {
     const usuarioActualizado = {
       nombres: this.nombres,
       apellidos: this.apellidos,
@@ -55,7 +66,7 @@ export class UsuariosEditComponent {
       estado: this.estado
     }
 
-    console.log(`Datos a enviar ${usuarioActualizado}`);
+    console.log('Datos a enviar ',usuarioActualizado);
 
     this.usuarioServide.ActualizarUsuario(this.id, usuarioActualizado).subscribe(
       () => {

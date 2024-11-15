@@ -11,6 +11,7 @@ export class UsuariosCreateComponent {
   nombres: string = ''
   apellidos: string = ''
   nombreusuario: string = ''
+  clave: string = ''
   edad: number = 0
   correo: string = ''
   estado: number = 0
@@ -22,7 +23,8 @@ export class UsuariosCreateComponent {
     const nuevoUsuario = {
       nombres: this.nombres,
       apellidos: this.apellidos,
-      nombreusuarios: this.nombreusuario,
+      nombreusuario: this.nombreusuario,
+      clave: this.clave,
       edad: this.edad,
       correo: this.correo,
       estado: this.estado
