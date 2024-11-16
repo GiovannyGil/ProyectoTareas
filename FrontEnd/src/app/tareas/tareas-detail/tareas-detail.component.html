@@ -1,0 +1,28 @@
+<app-navbar></app-navbar>
+
+<div class="detail-container">
+    <h2>Detalles de la Tarea</h2>
+
+    <div class="detail-card">
+        <h3>{{ tarea?.nombre }}</h3>
+        <p><strong>Descripción:</strong> {{ tarea?.descripcion }}</p>
+        <p><strong>Dificultad:</strong> {{ tarea?.dificultad }}</p>
+        <p  class="usuario">
+        <strong>Usuario Asignado:</strong> {{ tarea?.usuario?.nombreusuario }}
+        </p>
+
+        <div class="habilidades-container">
+        <h4>Habilidades:</h4>
+        <div class="habilidades-list">
+            <span
+            *ngFor="let habilidad of tarea?.habilidades"
+            class="habilidad-item"
+            >
+            {{ habilidad.nombre }}
+            </span>
+        </div>
+        </div>
+    </div>
+
+    <button class="back-button" (click)="Volver()">Volver</button>
+</div>

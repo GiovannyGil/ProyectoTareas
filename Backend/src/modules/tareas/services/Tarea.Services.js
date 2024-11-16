@@ -54,13 +54,14 @@ export const CrearTarea = async (req, res) => {
 export const ObtenerTareas = async (req, res) => {
     try {
         // obtener todas las tareas
-        const tareas = await tareaRepository.find({ where: { deletedAt: IsNull() },
+        const tareas = await tareaRepository.find({
+            where: { deletedAt: IsNull() },
             relations: ['usuario', 'habilidades'],
         });
 
         // Filtrar tareas asociadas a usuarios o habilidades eliminados, es decitr, que no tengan deletedAt
-        const tareasFiltradas = tareas.filter(tarea => 
-            tarea.usuario.deletedAt === null && 
+        const tareasFiltradas = tareas.filter(tarea =>
+            tarea.usuario.deletedAt === null &&
             tarea.habilidades.every(habilidad => habilidad.deletedAt === null)
         );
 
@@ -87,9 +88,9 @@ export const ObtenerTareaPorId = async (req, res) => {
     try {
         const id = req.params.id;
         // verificar si el id es un numero
-        if(isNaN(id)){
+        if (isNaN(id)) {
             console.error('EL ID DEBE SER UN NUMERO');
-            return res.status(400).json({message: 'EL ID DEBE SER UN NUMERO'});
+            return res.status(400).json({ message: 'EL ID DEBE SER UN NUMERO' });
         }
 
         // obtener la tarea por id
@@ -123,7 +124,10 @@ export const ActualizarTarea = async (req, res) => {
         }
 
         // Buscar la tarea por ID
-        const tarea = await Tareas.findOne({ where: { id }, relations: ['usuario', 'habilidades'] });
+        const tarea = await tareaRepository.findOne({
+            where: { id },
+            relations: ['usuario', 'habilidades'],
+        });
         if (!tarea) {
             console.error('TAREA NO ENCONTRADA');
             return res.status(404).json({ message: 'TAREA NO ENCONTRADA' });
@@ -147,7 +151,7 @@ export const ActualizarTarea = async (req, res) => {
         // Si se proporcionan habilidades, buscar por sus IDs
         if (habilidadesIds && habilidadesIds.length > 0) {
             const habilidades = await habilidadRepository.find({
-                where: { id: In(habilidadesIds) }
+                where: { id: In(habilidadesIds) },
             });
             const habilidadesValidas = habilidades.filter(habilidad => !habilidad.deletedAt);
             if (habilidadesValidas.length === 0) {
@@ -168,32 +172,34 @@ export const ActualizarTarea = async (req, res) => {
         console.warn('Tarea actualizada correctamente');
         return res.status(200).json({
             message: 'Tarea actualizada correctamente',
-            tarea: tareaActualizada
+            tarea: tareaActualizada,
         });
     } catch (error) {
         console.error(`NO SE PUDO ACTUALIZAR LA TAREA: ${error.message}`);
+        return res.status(500).json({ message: 'Error al actualizar la tarea', error: error.message });
     }
-}
+};
+
 
 // metodo para eliminar una tarea -> soft delete
 export const EliminarTarea = async (req, res) => {
     try {
         // obtener la tarea por id
         const id = parseInt(req.params.id);
-        
+
         // Verificar si el ID es un número
         if (isNaN(id)) {
             console.error('EL ID DEBE SER UN NÚMERO');
             return res.status(400).json({ message: 'EL ID DEBE SER UN NÚMERO' });
         }
-        
+
         // Buscar la tarea por ID
         const tarea = await tareaRepository.findOneBy({ id });
 
         // verificar si la tarea existe
-        if(!tarea){
+        if (!tarea) {
             console.error('TAREA NO ENCONTRADA');
-            return res.status(404).json({message: 'NO SE PUDO OBTENER LA TAREA ALGO SUCEDIÓ'});
+            return res.status(404).json({ message: 'NO SE PUDO OBTENER LA TAREA ALGO SUCEDIÓ' });
         }
 
         // Si la tarea ya está eliminada (tiene deletedAt)

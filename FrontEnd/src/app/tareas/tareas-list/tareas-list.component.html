@@ -1,5 +1,57 @@
-<app-navbar></app-navbar>
-<div class="content">
-  <!-- Aquí va el contenido específico de la vista de tareas -->
+<app-navbar></app-navbar> <!-- Incluye el navbar -->
+
+<div class="tareas-container">
   <h2>Gestión de Tareas</h2>
+
+
+
+  <!-- Botón para crear nueva tarea -->
+  <button class="add-button" (click)="IrCrearTarea()">
+    <fa-icon [icon]="faPlus"></fa-icon> Crear Tarea
+  </button>
+
+  <!-- Filtro por dificultad -->
+  <div class="filter-container">
+    <label for="dificultadFiltro" class="filter-label">Filtrar por Dificultad:</label>
+    <select
+      id="dificultadFiltro"
+      class="filter-select"
+      [(ngModel)]="dificultadFiltro"
+      (change)="FiltrarPorDificultad()"
+    >
+      <option [value]="null">Todas</option>
+      <option *ngFor="let nivel of [1, 2, 3, 4, 5]" [value]="nivel">
+        {{ nivel }}
+      </option>
+    </select>
+  </div>
+
+
+  <!-- Tabla de tareas -->
+  <table class="tareas-table">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Dificultad</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let tarea of tareas">
+        <td>{{ tarea.nombre }}</td>
+        <td>{{ tarea.dificultad }}</td>
+        <td>
+          <button class="action-button" (click)="VerDetallesTarea(tarea.id)">
+            <fa-icon [icon]="faEye"></fa-icon>
+          </button>
+          <button class="action-button" (click)="IrEditarTarea(tarea.id)">
+            <fa-icon [icon]="faEdit"></fa-icon>
+          </button>
+          <button class="action-button" (click)="EliminarTarea(tarea.id)">
+            <fa-icon [icon]="faTrash"></fa-icon>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 </div>

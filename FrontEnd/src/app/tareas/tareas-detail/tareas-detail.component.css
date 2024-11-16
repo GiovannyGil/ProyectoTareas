@@ -1,0 +1,77 @@
+.detail-container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+  }
+  
+  .detail-card {
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .detail-card h3 {
+    margin-bottom: 15px;
+    color: #6a5acd;
+  }
+  
+  .detail-card p {
+    margin: 5px 0;
+    color: #333;
+  }
+  
+  .habilidades-container ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .habilidades-container li {
+    background: #e6e6fa;
+    margin: 5px 0;
+    padding: 8px;
+    border-radius: 4px;
+  }
+  
+  .back-button {
+    background-color: #6a5acd;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+  }
+  
+  .back-button:hover {
+    background-color: #5a4cad;
+  }
+  
+  .habilidades-container {
+    margin-top: 20px;
+  }
+  
+  .habilidades-list {
+    display: flex;
+    flex-wrap: wrap; /* Permite que los elementos pasen a la siguiente línea si no caben */
+    gap: 10px; /* Espaciado entre las habilidades */
+  }
+  
+  .habilidad-item, .usuario {
+    background-color: #e6e6fa;
+    color: #333;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    white-space: nowrap; /* Evita que los textos largos se dividan en varias líneas */
+  }
+  
+  .habilidad-item:hover, .usuario:hover {
+    background-color: #d8bfd8;
+    cursor: pointer;
+    transform: scale(1.05); /* Agrega un ligero efecto al pasar el mouse */
+    transition: all 0.3s ease-in-out;
+  }
+

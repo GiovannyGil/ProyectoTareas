@@ -1,0 +1,72 @@
+<app-navbar></app-navbar>
+
+<div class="edit-tarea-container">
+    <h2>Editar Tarea</h2>
+
+    <form (ngSubmit)="actualizarTarea()">
+        <div class="form-group">
+        <label for="nombre">Nombre</label>
+        <input
+            type="text"
+            id="nombre"
+            [(ngModel)]="nombre"
+            name="nombre"
+            required
+        />
+        </div>
+
+        <div class="form-group">
+        <label for="descripcion">Descripción</label>
+        <textarea
+            id="descripcion"
+            [(ngModel)]="descripcion"
+            name="descripcion"
+            rows="3"
+            required
+        ></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="dificultad">Dificultad:</label>
+            <select id="dificultad" [(ngModel)]="dificultad" name="dificultad" required>
+              <option *ngFor="let nivel of [1, 2, 3, 4, 5]" [value]="nivel">
+                {{ nivel }}
+            </option>
+            </select>
+        </div>
+
+        <div class="form-group">
+        <label for="usuario">Usuario</label>
+        <input
+            type="text"
+            id="usuario"
+            [value]="usuario?.nombreusuario || ''"
+            disabled
+        />
+        </div>
+
+        <div class="form-group">
+            <label for="habilidades">Habilidades</label>
+            <select id="habilidades" (change)="agregarHabilidad($event)">
+            <option *ngFor="let habilidad of habilidadesDisponibles" [value]="habilidad | json">
+                {{ habilidad.nombre }}
+            </option>
+            </select>
+        </div>
+        
+
+        <div class="habilidades-list">
+        <span
+            class="habilidad-item"
+            *ngFor="let habilidad of habilidadesSeleccionadas"
+        >
+            {{ habilidad.nombre }}
+            <button (click)="quitarHabilidad(habilidad)">x</button>
+        </span>
+        </div>
+
+        <button type="submit" class="btn-submit" (click)="actualizarTarea()">
+        Actualizar Tarea
+        </button>
+    </form>
+</div>
