@@ -118,35 +118,34 @@ export const ObtenerUsuarioPorId = async (req, res) => {
 }
 
 // metodo para obtener un usuario por nombre de usuario
-export const ObtenerUsuarioNombre= async (req, res) => {
+export const ObtenerUsuarioNombre = async (nombreusuario) => {
     try {
-        // obtener el nombre de usuario
-        const { nombreusuario } = req.params;
-
-        // verificar si el nombre de usuario no esta vacio
+        // Verificar si el nombre de usuario no está vacío
         if (!nombreusuario) {
-            return res.status(400).json({ message: 'El nombre de usuario es obligatorio' });
+            throw new Error('El nombre de usuario es obligatorio');
         }
 
-        // obtener el usuario por nombre de usuario
-        const usuario = await UsuariosRepository.findOneBy({nombreusuario: nombreusuario, deletedAt: IsNull()});
+        // Obtener el usuario por nombre de usuario
+        const usuario = await UsuariosRepository.findOneBy({
+            nombreusuario,
+            deletedAt: IsNull()
+        });
 
-        // verificar si el usuario existe
+        // Verificar si el usuario existe
         if (!usuario) {
-            console.error('no se encontro el usuario');
-            return res.status(404).json({ message: 'No se encontró el usuario' });
+            console.error('No se encontró el usuario');
+            return null; // o también puedes lanzar un error si prefieres
         }
 
         console.warn('Usuario obtenido correctamente');
-        return res.status(200).json({
-            message: 'Usuario obtenido correctamente',
-            usuario
-        });
+        return usuario;
+
     } catch (error) {
         console.error(`NO SE PUDO OBTENER EL USUARIO: ${error.message}`);
-        return res.status(500).json({message: 'Error del servidor', error: error.message});
+        throw error; // Propaga el error al llamador (como RegistrarUsuario)
     }
-}
+};
+
 
 // metodo para obtener un usuario por correo
 export const ObtenerUsuarioCorreo = async (req, res) => {

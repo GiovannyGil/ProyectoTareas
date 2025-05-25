@@ -15,7 +15,6 @@ const tokenRepository = dataSource.getRepository(Tokens)
 export const RegistrarUsuario = async (req, res) => {
     try {
         const { nombres, apellidos, nombreusuario, edad, correo, clave, estado } = req.body;
-
         // Verificar si los campos están vacíos
         if (!nombres || !apellidos || !nombreusuario || !edad || !correo || !clave || !estado) {
             console.error('LOS DATOS NO PUEDEN ESTAR VACÍOS');
@@ -24,11 +23,6 @@ export const RegistrarUsuario = async (req, res) => {
 
 
         // Verificar si el usuario ya existe
-        // const usuarioExiste = await Usuarios.findOne({ where: { nombreusuario } });
-        // if (usuarioExiste) {
-        //     console.error('EL USUARIO YA EXISTE');
-        //     return res.status(400).json({ message: 'EL USUARIO YA EXISTE' });
-        // }
         const usuarioExistente = await ObtenerUsuarioNombre(nombreusuario)
         if (usuarioExistente) {
             console.error('EL USUARIO YA EXISTE');
@@ -40,7 +34,7 @@ export const RegistrarUsuario = async (req, res) => {
         const claveEncriptada = await bcryptjs.hash(clave, salt);
 
         // Crear un nuevo usuario
-        const nuevoUsuario = await Usuarios.create({
+        const nuevoUsuario = usuarioRepository.create({
             uuid: randomUUID(),
             nombres,
             apellidos,

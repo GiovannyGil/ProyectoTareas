@@ -52,15 +52,15 @@ export const Usuarios = new EntitySchema(
             default: 0, // 0 -> 1 -> 2 -> 3 -> 4 -> 5
         },
         createdAt: {
-            type: "timestamp",
+            type: "date",
             createDate: true,
         },
             updatedAt: {
-            type: "timestamp",
+                type: "date",
             updateDate: true,
         },
         deletedAt: {
-            type: "timestamp",
+            type: "date",
             nullable: true,
         },
     },

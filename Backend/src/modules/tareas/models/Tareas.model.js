@@ -25,15 +25,15 @@ export const Tareas = new EntitySchema(
             default: 0,
         },
         createdAt: {
-            type: "timestamp",
+            type: "date",
             createDate: true,
         },
             updatedAt: {
-            type: "timestamp",
+                type: "date",
             updateDate: true,
         },
         deletedAt: {
-            type: "timestamp",
+            type: "date",
             nullable: true,
         },
     },

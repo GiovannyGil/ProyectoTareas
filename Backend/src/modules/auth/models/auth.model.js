@@ -1,7 +1,8 @@
 import { EntitySchema } from "typeorm";
 
 export const Tokens = new EntitySchema(
-    {name: "Token", tableName: "tokens",
+    {
+        name: "Token", tableName: "tokens",
         columns: {
             id: {
                 primary: true,
@@ -15,7 +16,7 @@ export const Tokens = new EntitySchema(
                 nullable: false,
             },
             expiracion: {
-                type: "timestamp",
+                type: "date",
             },
             revoked: {
                 type: "boolean",
@@ -26,7 +27,7 @@ export const Tokens = new EntitySchema(
             usuario: {
                 target: "Usuario",
                 type: "many-to-one",
-                joinColumn: {name: "usuarioId"}
+                joinColumn: { name: "usuarioId" }
             },
         }
     }
