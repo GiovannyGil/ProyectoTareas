@@ -4,7 +4,13 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -21,7 +27,6 @@ class MainActivity : ComponentActivity() {
             TareasUsuariosTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Greeting(
-                        name = "Android",
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
@@ -30,18 +35,22 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
-    TareasUsuariosTheme {
-        Greeting("Android")
+fun Greeting(modifier: Modifier = Modifier) {
+    Column(
+        Modifier.fillMaxHeight().fillMaxWidth(), verticalArrangement = Arrangement.Center
+    ) {
+        Row(
+            Modifier.fillMaxSize(0.5f)
+        ) {
+            Text("Iniciar session")
+        }
+        Row(
+            Modifier.fillMaxSize(0.5f)
+        ) {
+            Text("Registrarse")
+        }
     }
 }
+
