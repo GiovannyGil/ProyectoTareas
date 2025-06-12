@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { tap, map, catchError } from 'rxjs/operators';
 
 // interface -> tipo y respuesta
 interface AuthResponse {
@@ -22,13 +22,9 @@ export class AuthService {
 
   // metodo login
   login(nombreusuario: string, clave: string): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, {nombreusuario, clave}).pipe(
-      tap((response) => {
-        localStorage.setItem(this.tokenKey, response.token) // guardar el token en el localstorage
-        // console.log('token', response.token);
-        this.programarCierreSesion() // programar el cierre de sesion
-      })
-    )
+    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, {nombreusuario, clave}, {
+      withCredentials: true, // enviar cookies con la solicitud
+    })
   }
 
   // metodo registrarse
@@ -38,45 +34,24 @@ export class AuthService {
     })
   }
 
-
   // metodo para cerrar session
   logout(): void {
-    localStorage.removeItem(this.tokenKey)
-    this.router.navigate(['/'])
-  }
-
-  // metodo obtener token
-  getToken(): string | null {
-    return localStorage.getItem(this.tokenKey)
-  }
-  
-  // metodo para obtener la fecha/tiempo de expiracion del token JWT
-  private obtenerFechaExpiracion(): number | null{
-    const token = this.getToken() // obtener el token
-    if (!token) return null // si no hay token, retornar null
-    
-    const payload = JSON.parse(atob(token.split('.')[1])) // decodificar la carga util del token
-    return payload.exp ? payload.exp * 1000 : null // convertir a milisegundos
-  }
-  
-  // metodo para programar cierre de sesion automatico
-  private programarCierreSesion(): void {
-    const fechaExpiracion = this.obtenerFechaExpiracion()
-    if(!fechaExpiracion) return // si no hay fecha salir
-    
-    const tiempoRestante = fechaExpiracion - Date.now() // 
-    if(tiempoRestante > 0) {
-      setTimeout(() => {
-        alert('El Token ha Expirado. Serás Redirigido al Inicio')
-        this.logout()
-      }, tiempoRestante)
-    }
+    this.http.post(`${this.apiUrl}/logout`, {}, {
+      withCredentials: true
+    }).subscribe(() => {
+      this.router.navigate(['/']);
+    });
   }
 
   // metodo para verificar si está logeoado
-  isLoggedIn(): boolean {
-    // verifica si el token actual es valido usando la fecha de expiración
-    const fechaExpiracion = this.obtenerFechaExpiracion()
-    return fechaExpiracion ? Date.now() < fechaExpiracion : false
+  // checkAuthStatus() {}
+  checkAuthStatus(): Observable<boolean> {
+    return this.http.get<{ authenticated: boolean }>(`${this.apiUrl}/check-auth`, {
+      withCredentials: true
+    }).pipe(
+      map(res => res.authenticated),
+      catchError(() => of(false))
+    );
   }
+
 }

@@ -14,51 +14,29 @@ export class HabilidadesService {
 
   // Metodo para obtener todas las habilidades
   getHabilidades(): Observable<any> {
-    const authToken = localStorage.getItem('authToken'); // obtener el token del localstorage
-
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${authToken}`
-    }); 
-
-    return this.http.get<any>(this.apiUrl, { headers });
+    return this.http.get<any>(this.apiUrl, { withCredentials: true });
   }
 
 
   // Método para eliminar una habilidad
   deleteHabilidad(id: number): Observable<void> {
-    const authToken = localStorage.getItem('authToken');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${authToken}`
-    });
-    return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers });
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
   // metodo crear habilidad
   createHabilidad(habilidad: any): Observable<any> {
-    const authToken = localStorage.getItem('authToken');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${authToken}`
-    });
-    return this.http.post<any>(this.apiUrl, habilidad, { headers });
+    return this.http.post<any>(this.apiUrl, habilidad, { withCredentials: true });
   }
   
   // metodo obtener habilidad por id
   getHabilidad(id: number): Observable<any> {
-    const authToken = localStorage.getItem('authToken');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${authToken}`
-    });
-    return this.http.get<any>(`${this.apiUrl}/${id}`, { headers });
+    return this.http.get<any>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
   
   
   // metodo actualizar
   updateHabilidad(id: number, habilidad: any): Observable<any> {
-    const authToken = localStorage.getItem('authToken');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${authToken}`
-    });
-    return this.http.put<any>(`${this.apiUrl}/${id}`, habilidad, { headers });
+    return this.http.put<any>(`${this.apiUrl}/${id}`, habilidad, { withCredentials: true });
   }  
   
 }

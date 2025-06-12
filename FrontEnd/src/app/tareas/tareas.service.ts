@@ -13,56 +13,30 @@ export class TareasService {
 
   // Obtener todas las tareas
   ObtenerTareas(): Observable<any> {
-    const authToken = localStorage.getItem('authToken');
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${authToken}`,
-    });
-    return this.http.get<any>(this.apiURL, { headers });
+    return this.http.get<any>(this.apiURL, { withCredentials: true });
   }
 
   // Obtener una tarea por ID
   ObtenerTareaPorId(id: number): Observable<any> {
-    const authToken = localStorage.getItem('authToken');
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${authToken}`,
-    });
-    return this.http.get<any>(`${this.apiURL}/${id}`, { headers });
+    return this.http.get<any>(`${this.apiURL}/${id}`, { withCredentials: true });
   }
 
   ObtenerHabilidades(): Observable<any> {
-    const authToken = localStorage.getItem('authToken');
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${authToken}`,
-    });
-  
-    return this.http.get<any>('http://localhost:3000/api/habilidades', { headers });
+    return this.http.get<any>('http://localhost:3000/api/habilidades', { withCredentials: true });
   }
 
   // Crear una nueva tarea
   CrearTarea(tarea: any): Observable<any> {
-    const authToken = localStorage.getItem('authToken');
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${authToken}`,
-    });
-    return this.http.post<any>(this.apiURL, tarea, { headers });
+    return this.http.post<any>(this.apiURL, tarea, { withCredentials: true });
   }
 
   // Actualizar una tarea
   ActualizarTarea(id: number, tarea: any): Observable<any> {
-    const authToken = localStorage.getItem('authToken');
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${authToken}`,
-    });
-  
-    return this.http.patch<any>(`http://localhost:3000/api/tareas/${id}`, tarea, { headers });
+    return this.http.patch<any>(`http://localhost:3000/api/tareas/${id}`, tarea, { withCredentials: true });
   }
 
   // Eliminar una tarea
   EliminarTarea(id: number): Observable<any> {
-    const authToken = localStorage.getItem('authToken');
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${authToken}`,
-    });
-    return this.http.delete<any>(`${this.apiURL}/${id}`, { headers });
+    return this.http.delete<any>(`${this.apiURL}/${id}`, { withCredentials: true });
   }
 }

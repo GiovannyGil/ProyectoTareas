@@ -10,11 +10,15 @@ export const VerificarToken = async (req, res, next) => {
         // Obtener el token del header
         const authHeader = req.headers.authorization;
         if (!authHeader) {
-            console.error('TOKEN NO PROPORCIONADO');
-            return res.status(401).json({ message: 'TOKEN NO PROPORCIONADO' });
+            console.error('AuthHeader vacío');
+            return res.status(401).json({ message: 'AuthHeader vacío' });
         }
 
         const token = authHeader.split(' ')[1]; // Separar "Bearer" del token
+        if (!token) {
+            console.error('TOKEN NO PROPORCIONADO');
+            return res.status(401).json({ message: 'TOKEN NO PROPORCIONADO' });
+        }
 
         // Verificar si el token está revocado
         const tokenRevocado = await tokenRepository.findOne({

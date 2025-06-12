@@ -117,9 +117,16 @@ export const IniciarSesion = async (req, res) => {
         await tokenRepository.save(tokenActivo);
 
         console.warn('Inicio de sesión exitoso');
+
+        res.cookie('token', token, {
+            httpOnly: true,
+            //secure: process.env.NODE_ENV === 'production', // usa true solo en producción con HTTPS
+            sameSite: 'Strict', // o 'Lax' si tu front está en otro dominio y necesitas enviar cookies
+            maxAge: 60 * 60 * 1000 // 1 hora en milisegundos
+        });
+
         return res.status(200).json({
-            message: 'Inicio de sesión exitoso',
-            token
+            message: 'Inicio de sesión exitoso'
         });
 
     } catch (error) {
@@ -144,10 +151,10 @@ export const CerrarSesion = async (req, res) => {
         });
 
         await tokenRepository.save(tokenRevocado);
+        res.clearCookie('token');
 
         console.warn('Sesión cerrada exitosamente');
         return res.status(200).json({ message: 'SESIÓN CERRADA EXITOSAMENTE' });
-
     } catch (error) {
         console.error(`ERROR AL CERRAR SESIÓN: ${error.message}`);
         return res.status(500).json({ message: 'Error del servidor', error: error.message });

@@ -24,7 +24,7 @@ export class LoginComponent {
       },
       (error) => {
         console.error('Error al iniciar sesión ', error)
-        alert('Error en las Credenciales')
+        alert('Credenciales incorrectas')
       }
     )
   }

@@ -4,6 +4,7 @@ import morgan from "morgan"
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 import { limpiarTokensExpirados } from './modules/auth/middlewares/verify.token.js'
+import cookieParser from 'cookie-parser';
 
 // configurar variables de entorno
 dotenv.config();
@@ -14,9 +15,14 @@ const app = Express()
 //midleware
 app.use(morgan('dev')) // para que express pueda entender las peticiones
 app.use(Express.json()) // para que express pueda entender json
+app.use(cookieParser()); // para que express pueda entender cookies
 app.use(Express.urlencoded({ extended: true })) // para que express pueda entender formularios
-app.use(cors()) // para que cualquier dominio lea o haga peticiones
 
+// Configura CORS para permitir cookies desde el frontend
+app.use(cors({
+    origin: 'http://localhost:4200', // url FrontEnd
+    credentials: true
+}));
 
 // rutas
 import ruta from "./routes.js"
