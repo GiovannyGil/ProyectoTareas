@@ -1,31 +1,23 @@
 import dotenv from 'dotenv';
-import mysql2 from 'mysql2';
+import { DataSource } from 'typeorm'
 dotenv.config();
-const mysql = mysql2
 
-const pool = mysql.createPool({
-    host: process.env.DB_HOST || "localhost",
-    user: process.env.DB_USER || "root",
-    password: process.env.DB_PASSWORD || "",
-    database: process.env.DB_NAME || "tareasproyectov1",
-    port: process.env.DB_PORT || 3306,
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0
-});
+export const dataSource = new DataSource({
+    type: 'sqlite',
+    database: 'tareasproyectov1.sqlite',
+    synchronize: true,  // Sincroniza las entidades con la base de datos
+    // logging: true,      // Habilita el logging para ver las consultas SQL por consola
+    entities: [],
+})
 
-// Promisificar el pool para usar async/await
-const promisePool = pool.promise();
-
-(async () => {
+// Función para inicializar la conexión
+export const initializeDatabase = async () => {
     try {
-        const connection = await promisePool.getConnection();
-        console.log("✅ Conectado correctamente a MySQL");
-        connection.release();
-    } catch (err) {
-        console.error("❌ Error conectando manualmente:", err);
+        await dataSource.initialize();
+        console.warn('\x1b[32m%s\x1b[0m', 'Base de datos conectada exitosamente',);
+
+    } catch (error) {
+        console.error('Error conectando la base de datos:', error.message);
+        throw error.message; // Lanza el error si quieres manejarlo en otro lugar
     }
-})();
-
-
-export default promisePool;
+};

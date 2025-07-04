@@ -18,6 +18,11 @@ app.use(cors()) // para que cualquier dominio lea o haga peticiones
 app.get("/", (req, res) => {
     res.send("API funcionando 🚀");
 });
+// condiciones de la ruta equivocada -> dar info de cual es la ruta correcta
+app.use((req, res) => {
+    res.status(404).json({ message: 'Ruta no encontrada, la ruta a la que debe ingresar es: http://localhost:3000/api' })
+})
+
 
 // Configurar puerto
 const PORT = process.env.PORT || 5000;
