@@ -1,3 +1,4 @@
+import { AuthService } from './../../auth/auth.service';
 import { Component, OnInit } from '@angular/core';
 import { TareasService } from '../tareas.service';
 import { HabilidadesService } from '../../habilidades/habilidades.service';
@@ -19,7 +20,8 @@ export class TareasCreateComponent implements OnInit {
   constructor(
     private tareasService: TareasService,
     private habilidadesService: HabilidadesService,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -28,15 +30,16 @@ export class TareasCreateComponent implements OnInit {
   }
 
   cargarUsuarioActual(): void {
-    const token = localStorage.getItem('authToken');
-    if (token) {
-      const decodedToken = JSON.parse(atob(token.split('.')[1]));
-      this.usuario = {
-        id: decodedToken.id,
-        nombreusuario: decodedToken.nombreusuario
-      };
-    }
+    this.authService.getUsuarioActual().subscribe(
+      (response) => {
+        this.usuario = response.usuario;
+      },
+      (error) => {
+        console.error("Error al obtener usuario actual:", error.message);
+      }
+    );
   }
+
 
   cargarHabilidades(): void {
     this.habilidadesService.getHabilidades().subscribe(

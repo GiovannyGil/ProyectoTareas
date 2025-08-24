@@ -161,6 +161,25 @@ export const CerrarSesion = async (req, res) => {
     }
 };
 
+export const UsuarioActual = async (req, res) => {
+    try {
+        const usuario = await usuarioRepository.findOne({
+            where: { id: req.usuario.id },
+            select: ["id", "nombreusuario", "nombres", "apellidos", "correo"]
+        });
+
+        if (!usuario) {
+            return res.status(404).json({ message: "Usuario no encontrado" });
+        }
+
+        return res.status(200).json({ usuario });
+    } catch (error) {
+        console.error("ERROR AL OBTENER USUARIO ACTUAL:", error.message);
+        return res.status(500).json({ message: "Error del servidor" });
+    }
+};
+
+
 
 // funcion para eliminar los tokens expirados y revocados de la base de datos cada 24 horas
 const limpiarTokensExpirados = async () => {

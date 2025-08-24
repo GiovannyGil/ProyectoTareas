@@ -17,6 +17,7 @@ router.get('/', (req, res) => {
 router.post('/login', Auth.IniciarSesion)
 router.post('/register', Auth.RegistrarUsuario)
 router.get('/logout', VerificarToken, Auth.CerrarSesion)
+router.get("/me", VerificarToken, Auth.UsuarioActual);
 
 
 export default router

@@ -43,6 +43,11 @@ export class AuthService {
     });
   }
 
+  getUsuarioActual(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/me`, { withCredentials: true });
+  }
+
+
   // metodo para verificar si está logeoado
   // checkAuthStatus() {}
   checkAuthStatus(): Observable<boolean> {
